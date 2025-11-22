@@ -1,5 +1,4 @@
-'use client';
-
+import { useState } from 'react';
 import { Transaction } from '@/lib/types';
 import {
     Table,
@@ -11,26 +10,75 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { ArrowUpDown } from 'lucide-react';
 
 interface TransactionListProps {
     transactions: Transaction[];
 }
 
+type SortConfig = {
+    key: keyof Transaction | null;
+    direction: 'asc' | 'desc';
+};
+
 export function TransactionList({ transactions }: TransactionListProps) {
+    const [sortConfig, setSortConfig] = useState<SortConfig>({ key: null, direction: 'asc' });
+
+    const handleSort = (key: keyof Transaction) => {
+        setSortConfig((current) => ({
+            key,
+            direction: current.key === key && current.direction === 'asc' ? 'desc' : 'asc',
+        }));
+    };
+
+    const sortedTransactions = [...transactions].sort((a, b) => {
+        if (!sortConfig.key) return 0;
+
+        const aValue = a[sortConfig.key];
+        const bValue = b[sortConfig.key];
+
+        if (aValue === bValue) return 0;
+        if (aValue === null || aValue === undefined) return 1;
+        if (bValue === null || bValue === undefined) return -1;
+
+        const comparison = aValue < bValue ? -1 : 1;
+        return sortConfig.direction === 'asc' ? comparison : -comparison;
+    });
+
     return (
         <div className="rounded-md border">
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Date</TableHead>
+                        <TableHead onClick={() => handleSort('date')} className="cursor-pointer hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center gap-2">
+                                Date
+                                <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
+                            </div>
+                        </TableHead>
                         <TableHead>Description</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead>Type</TableHead>
-                        <TableHead className="text-right">Amount</TableHead>
+                        <TableHead onClick={() => handleSort('category')} className="cursor-pointer hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center gap-2">
+                                Category
+                                <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
+                            </div>
+                        </TableHead>
+                        <TableHead onClick={() => handleSort('type')} className="cursor-pointer hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center gap-2">
+                                Type
+                                <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
+                            </div>
+                        </TableHead>
+                        <TableHead onClick={() => handleSort('amount')} className="text-right cursor-pointer hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center justify-end gap-2">
+                                Amount
+                                <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
+                            </div>
+                        </TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {transactions.map((transaction) => (
+                    {sortedTransactions.map((transaction) => (
                         <TableRow key={transaction.id}>
                             <TableCell>{new Date(transaction.date).toLocaleDateString()}</TableCell>
                             <TableCell>

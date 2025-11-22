@@ -65,21 +65,8 @@ export default function SignUpPage() {
                 throw signUpError;
             }
 
-            if (data.user) {
-                const { error: profileError } = await supabase
-                    .from('users')
-                    .insert([
-                        {
-                            id: data.user.id,
-                            email: values.email,
-                            name: values.fullName,
-                        },
-                    ]);
-
-                if (profileError) {
-                    console.error('Error creating user profile:', profileError);
-                }
-            }
+            // User profile creation is handled by the Supabase Trigger (handle_new_user)
+            // We don't need to manually insert into public.users anymore.
 
             router.push('/'); // Redirect to dashboard
         } catch (err: any) {
@@ -145,9 +132,9 @@ export default function SignUpPage() {
                 </Form>
             </CardContent>
             <CardFooter className="flex justify-center">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted-foreground">
                     Already have an account?{' '}
-                    <Link href="/login" className="text-blue-600 hover:underline">
+                    <Link href="/login" className="text-primary hover:underline">
                         Sign in
                     </Link>
                 </p>

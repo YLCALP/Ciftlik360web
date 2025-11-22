@@ -1,5 +1,4 @@
-'use client';
-
+import { useState } from 'react';
 import { InventoryItem } from '@/lib/types';
 import {
     Table,
@@ -11,7 +10,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowDown, ArrowUp, AlertTriangle } from 'lucide-react';
+import { ArrowDown, ArrowUp, AlertTriangle, ArrowUpDown } from 'lucide-react';
 
 interface InventoryTableProps {
     items: InventoryItem[];
@@ -19,23 +18,71 @@ interface InventoryTableProps {
     onStockOut: (item: InventoryItem) => void;
 }
 
+type SortConfig = {
+    key: keyof InventoryItem | null;
+    direction: 'asc' | 'desc';
+};
+
 export function InventoryTable({ items, onStockIn, onStockOut }: InventoryTableProps) {
+    const [sortConfig, setSortConfig] = useState<SortConfig>({ key: null, direction: 'asc' });
+
+    const handleSort = (key: keyof InventoryItem) => {
+        setSortConfig((current) => ({
+            key,
+            direction: current.key === key && current.direction === 'asc' ? 'desc' : 'asc',
+        }));
+    };
+
+    const sortedItems = [...items].sort((a, b) => {
+        if (!sortConfig.key) return 0;
+
+        const aValue = a[sortConfig.key];
+        const bValue = b[sortConfig.key];
+
+        if (aValue === bValue) return 0;
+        if (aValue === null || aValue === undefined) return 1;
+        if (bValue === null || bValue === undefined) return -1;
+
+        const comparison = aValue < bValue ? -1 : 1;
+        return sortConfig.direction === 'asc' ? comparison : -comparison;
+    });
+
     return (
         <div className="rounded-md border">
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Type</TableHead>
-                        <TableHead>Quantity</TableHead>
+                        <TableHead onClick={() => handleSort('feed_name')} className="cursor-pointer hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center gap-2">
+                                Name
+                                <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
+                            </div>
+                        </TableHead>
+                        <TableHead onClick={() => handleSort('feed_type')} className="cursor-pointer hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center gap-2">
+                                Type
+                                <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
+                            </div>
+                        </TableHead>
+                        <TableHead onClick={() => handleSort('quantity')} className="cursor-pointer hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center gap-2">
+                                Quantity
+                                <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
+                            </div>
+                        </TableHead>
                         <TableHead>Unit</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead>Last Updated</TableHead>
+                        <TableHead onClick={() => handleSort('updated_at')} className="cursor-pointer hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center gap-2">
+                                Last Updated
+                                <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
+                            </div>
+                        </TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {items.map((item) => {
+                    {sortedItems.map((item) => {
                         return (
                             <TableRow key={item.id}>
                                 <TableCell className="font-medium">{item.feed_name}</TableCell>

@@ -7,15 +7,34 @@ import { StockAdjustmentModal } from '@/components/inventory/StockAdjustmentModa
 import { InventoryForm, InventoryFormValues } from '@/components/inventory/InventoryForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search } from 'lucide-react';
+import { Plus, Search, Download } from 'lucide-react';
 import { InventoryItem } from '@/lib/types';
 import { createInventoryPurchaseTransaction } from '@/lib/transactions';
+import { toast } from '@/lib/toast';
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { Card, CardContent } from '@/components/ui/card';
+import { TableSkeleton } from '@/components/shared/TableSkeleton';
+import { EmptyState } from '@/components/ui/empty-state';
+import { PackageOpen } from 'lucide-react';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { exportToExcel, exportToPDF } from '@/lib/export';
 
 export default function InventoryPage() {
     const [items, setItems] = useState<InventoryItem[]>([]);
@@ -26,6 +45,8 @@ export default function InventoryPage() {
     const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
     const [modalType, setModalType] = useState<'in' | 'out'>('in');
     const [error, setError] = useState<string | null>(null);
+    const [isCreating, setIsCreating] = useState(false);
+    const [statusFilter, setStatusFilter] = useState<string>('all');
 
     const supabase = createClient();
 
@@ -50,9 +71,16 @@ export default function InventoryPage() {
         }
     }
 
-    const filteredItems = items.filter((item) =>
-        item.feed_name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredItems = items.filter((item) => {
+        const matchesSearch = item.feed_name.toLowerCase().includes(searchQuery.toLowerCase());
+
+        const matchesStatus = statusFilter === 'all' ||
+            (statusFilter === 'low' && item.quantity < 10) ||
+            (statusFilter === 'out' && item.quantity === 0) ||
+            (statusFilter === 'in' && item.quantity > 0);
+
+        return matchesSearch && matchesStatus;
+    });
 
     const handleStockIn = (item: InventoryItem) => {
         setSelectedItem(item);
@@ -89,12 +117,19 @@ export default function InventoryPage() {
                     ? { ...item, quantity: newQuantity, updated_at: new Date().toISOString() }
                     : item
             ));
+            toast.success(
+                type === 'in' ? 'Stok eklendi!' : 'Stok çıkarıldı!',
+                `${selectedItem.feed_name} için stok güncellendi.`
+            );
         } catch (error) {
             console.error('Error updating stock:', error);
+            toast.error('Hata!', 'Stok güncellenirken bir sorun oluştu.');
         }
     };
 
     const handleCreate = async (data: InventoryFormValues) => {
+        if (isCreating) return;
+        setIsCreating(true);
         try {
             const { data: { user } } = await supabase.auth.getUser();
 
@@ -139,22 +174,76 @@ export default function InventoryPage() {
 
             setItems([...items, insertedData]);
             setIsAddDialogOpen(false);
+            toast.success('Ürün eklendi!', `${data.feed_name} başarıyla envantere eklendi.`);
         } catch (error) {
             console.error('Error creating item:', error);
+            toast.error('Hata!', 'Ürün eklenirken bir sorun oluştu.');
+        } finally {
+            setIsCreating(false);
         }
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 animate-fade-in">
             <div className="flex items-center justify-between">
                 <h2 className="text-3xl font-bold tracking-tight">Inventory</h2>
-                <Button onClick={() => setIsAddDialogOpen(true)}>
-                    <Plus className="mr-2 h-4 w-4" /> Add Item
-                </Button>
+                <div className="flex gap-2">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline">
+                                <Download className="mr-2 h-4 w-4" /> Dışa Aktar
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuItem onClick={() => {
+                                const success = exportToExcel(
+                                    filteredItems.map((item: InventoryItem) => ({
+                                        'Ürün Adı': item.feed_name,
+                                        'Tür': item.feed_type,
+                                        'Marka': item.brand || '-',
+                                        'Miktar': item.quantity,
+                                        'Birim': item.unit,
+                                        'Alış Fiyatı': item.purchase_price,
+                                        'Alış Tarihi': item.purchase_date,
+                                        'Son Kullanma': item.expiry_date || '-',
+                                    })),
+                                    'Envanter'
+                                );
+                                if (success) toast.success('Başarılı!', 'Excel dosyası indirildi.');
+                                else toast.error('Hata!', 'Dışa aktarma başarısız.');
+                            }}>
+                                Excel (.xlsx)
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => {
+                                const success = exportToPDF(
+                                    filteredItems,
+                                    [
+                                        { header: 'Ürün Adı', dataKey: 'feed_name' },
+                                        { header: 'Tür', dataKey: 'feed_type' },
+                                        { header: 'Marka', dataKey: 'brand' },
+                                        { header: 'Miktar', dataKey: 'quantity' },
+                                        { header: 'Birim', dataKey: 'unit' },
+                                        { header: 'Alış Fiyatı', dataKey: 'purchase_price' },
+                                    ],
+                                    'Envanter',
+                                    'Envanter Listesi'
+                                );
+                                if (success) toast.success('Başarılı!', 'PDF dosyası indirildi.');
+                                else toast.error('Hata!', 'Dışa aktarma başarısız.');
+                            }}>
+                                PDF (.pdf)
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <Button onClick={() => setIsAddDialogOpen(true)}>
+                        <Plus className="mr-2 h-4 w-4" /> Add Item
+                    </Button>
+                </div>
             </div>
 
-            <div className="flex items-center gap-4">
-                <div className="relative w-64">
+
+            <div className="flex flex-col sm:flex-row items-center gap-4 animate-slide-up delay-100">
+                <div className="relative w-full sm:w-64">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
                         placeholder="Search inventory..."
@@ -163,23 +252,52 @@ export default function InventoryPage() {
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-full sm:w-[180px]">
+                        <SelectValue placeholder="Filter by Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Items</SelectItem>
+                        <SelectItem value="in">In Stock</SelectItem>
+                        <SelectItem value="low">Low Stock (&lt; 10)</SelectItem>
+                        <SelectItem value="out">Out of Stock</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
 
-            {error && (
-                <div className="bg-destructive/15 text-destructive px-4 py-2 rounded-md">
-                    Error: {error}
-                </div>
-            )}
+            {
+                error && (
+                    <div className="bg-destructive/15 text-destructive px-4 py-2 rounded-md">
+                        Error: {error}
+                    </div>
+                )
+            }
 
-            {loading ? (
-                <div>Loading...</div>
-            ) : (
-                <InventoryTable
-                    items={filteredItems}
-                    onStockIn={handleStockIn}
-                    onStockOut={handleStockOut}
-                />
-            )}
+            {
+                loading ? (
+                    <TableSkeleton />
+                ) : filteredItems.length === 0 ? (
+                    <EmptyState
+                        icon={PackageOpen}
+                        title="Envanter boş"
+                        description="Yem, ilaç veya diğer malzemeleri ekleyerek stok takibine başlayın."
+                        actionLabel="Ürün Ekle"
+                        onAction={() => setIsAddDialogOpen(true)}
+                    />
+                ) : (
+                    <div className="animate-slide-up delay-200">
+                        <Card>
+                            <CardContent className="p-0">
+                                <InventoryTable
+                                    items={filteredItems}
+                                    onStockIn={handleStockIn}
+                                    onStockOut={handleStockOut}
+                                />
+                            </CardContent>
+                        </Card>
+                    </div>
+                )
+            }
 
             <StockAdjustmentModal
                 isOpen={isModalOpen}
@@ -197,9 +315,10 @@ export default function InventoryPage() {
                     <InventoryForm
                         onSubmit={handleCreate}
                         onCancel={() => setIsAddDialogOpen(false)}
+                        isLoading={isCreating}
                     />
                 </DialogContent>
             </Dialog>
-        </div>
+        </div >
     );
 }

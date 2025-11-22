@@ -1,5 +1,4 @@
-'use client';
-
+import { useState } from 'react';
 import { Animal } from '@/lib/types';
 import {
     Table,
@@ -11,7 +10,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Edit, Eye, Trash, BadgeTurkishLira } from 'lucide-react';
+import { Edit, Eye, Trash, BadgeTurkishLira, ArrowUpDown } from 'lucide-react';
 import Link from 'next/link';
 
 interface AnimalTableProps {
@@ -21,7 +20,35 @@ interface AnimalTableProps {
     onSell: (animal: Animal) => void;
 }
 
+type SortConfig = {
+    key: keyof Animal | null;
+    direction: 'asc' | 'desc';
+};
+
 export function AnimalTable({ animals, onDelete, onEdit, onSell }: AnimalTableProps) {
+    const [sortConfig, setSortConfig] = useState<SortConfig>({ key: null, direction: 'asc' });
+
+    const handleSort = (key: keyof Animal) => {
+        setSortConfig((current) => ({
+            key,
+            direction: current.key === key && current.direction === 'asc' ? 'desc' : 'asc',
+        }));
+    };
+
+    const sortedAnimals = [...animals].sort((a, b) => {
+        if (!sortConfig.key) return 0;
+
+        const aValue = a[sortConfig.key];
+        const bValue = b[sortConfig.key];
+
+        if (aValue === bValue) return 0;
+        if (aValue === null || aValue === undefined) return 1;
+        if (bValue === null || bValue === undefined) return -1;
+
+        const comparison = aValue < bValue ? -1 : 1;
+        return sortConfig.direction === 'asc' ? comparison : -comparison;
+    });
+
     const getStatusColor = (status: string) => {
         const statusLower = status?.toLowerCase();
         switch (statusLower) {
@@ -32,7 +59,7 @@ export function AnimalTable({ animals, onDelete, onEdit, onSell }: AnimalTablePr
             case 'pregnant':
                 return 'bg-blue-500 hover:bg-blue-600';
             case 'sold':
-                return 'bg-gray-500 hover:bg-gray-600';
+                return 'bg-red-500 hover:bg-red-600';
             case 'active':
                 return 'bg-green-500 hover:bg-green-600';
             default:
@@ -45,16 +72,41 @@ export function AnimalTable({ animals, onDelete, onEdit, onSell }: AnimalTablePr
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Tag Number</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Type</TableHead>
-                        <TableHead>Breed</TableHead>
-                        <TableHead>Status</TableHead>
+                        <TableHead onClick={() => handleSort('tag_number')} className="cursor-pointer hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center gap-2">
+                                Tag Number
+                                <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
+                            </div>
+                        </TableHead>
+                        <TableHead onClick={() => handleSort('name')} className="cursor-pointer hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center gap-2">
+                                Name
+                                <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
+                            </div>
+                        </TableHead>
+                        <TableHead onClick={() => handleSort('species')} className="cursor-pointer hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center gap-2">
+                                Type
+                                <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
+                            </div>
+                        </TableHead>
+                        <TableHead onClick={() => handleSort('breed')} className="cursor-pointer hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center gap-2">
+                                Breed
+                                <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
+                            </div>
+                        </TableHead>
+                        <TableHead onClick={() => handleSort('status')} className="cursor-pointer hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center gap-2">
+                                Status
+                                <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
+                            </div>
+                        </TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {animals.map((animal) => (
+                    {sortedAnimals.map((animal) => (
                         <TableRow key={animal.id}>
                             <TableCell className="font-medium">{animal.tag_number}</TableCell>
                             <TableCell>{animal.name || '-'}</TableCell>

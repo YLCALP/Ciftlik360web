@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Transaction } from '@/lib/types';
 import {
     Dialog,
@@ -20,25 +20,52 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 
+import { Calendar } from '@/components/ui/calendar';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
+
 interface TransactionModalProps {
     isOpen: boolean;
     onClose: () => void;
     onConfirm: (transaction: Omit<Transaction, 'id' | 'created_at' | 'user_id'>) => void;
+    forcedType?: 'income' | 'expense';
 }
 
 export function TransactionModal({
     isOpen,
     onClose,
     onConfirm,
+    forcedType,
 }: TransactionModalProps) {
     const [formData, setFormData] = useState({
-        date: new Date().toISOString().split('T')[0],
+        date: format(new Date(), 'yyyy-MM-dd'),
         description: '',
         amount: 0,
-        type: 'expense' as 'income' | 'expense',
+        type: forcedType || 'expense',
         category: 'other',
         notes: '',
     });
+
+    // Update state when forcedType changes or modal opens
+    useEffect(() => {
+        if (isOpen && forcedType) {
+            setFormData(prev => ({ ...prev, type: forcedType }));
+        }
+    }, [isOpen, forcedType]);
+
+    const formatCurrency = (value: string) => {
+        if (!value) return '';
+        // Remove non-digits
+        const number = value.replace(/\D/g, '');
+        // Add dots as thousands separators
+        return number.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    };
 
     const handleChange = (field: string, value: any) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
@@ -48,10 +75,10 @@ export function TransactionModal({
         e.preventDefault();
         onConfirm(formData);
         setFormData({
-            date: new Date().toISOString().split('T')[0],
+            date: format(new Date(), 'yyyy-MM-dd'),
             description: '',
             amount: 0,
-            type: 'expense',
+            type: forcedType || 'expense',
             category: 'other',
             notes: '',
         });
@@ -68,23 +95,47 @@ export function TransactionModal({
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="date">Date</Label>
-                            <Input
-                                id="date"
-                                type="date"
-                                value={formData.date}
-                                onChange={(e) => handleChange('date', e.target.value)}
-                                required
-                            />
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant={"outline"}
+                                        className={cn(
+                                            "w-full pl-3 text-left font-normal",
+                                            !formData.date && "text-muted-foreground"
+                                        )}
+                                    >
+                                        {formData.date ? (
+                                            format(new Date(formData.date), "PPP")
+                                        ) : (
+                                            <span>Pick a date</span>
+                                        )}
+                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="start">
+                                    <Calendar
+                                        mode="single"
+                                        selected={formData.date ? new Date(formData.date) : undefined}
+                                        onSelect={(date) => handleChange('date', date ? format(date, 'yyyy-MM-dd') : '')}
+                                        disabled={(date) =>
+                                            date > new Date() || date < new Date("1900-01-01")
+                                        }
+                                        initialFocus
+                                    />
+                                </PopoverContent>
+                            </Popover>
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="amount">Amount</Label>
                             <Input
                                 id="amount"
-                                type="number"
-                                min="0"
-                                step="0.01"
-                                value={formData.amount}
-                                onChange={(e) => handleChange('amount', parseFloat(e.target.value))}
+                                value={formatCurrency(formData.amount.toString())}
+                                onChange={(e) => {
+                                    const rawValue = e.target.value.replace(/\./g, '');
+                                    if (!isNaN(Number(rawValue))) {
+                                        handleChange('amount', Number(rawValue));
+                                    }
+                                }}
                                 required
                             />
                         </div>
@@ -95,8 +146,9 @@ export function TransactionModal({
                                 onValueChange={(value) =>
                                     handleChange('type', value)
                                 }
+                                disabled={!!forcedType}
                             >
-                                <SelectTrigger>
+                                <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Select type" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -113,7 +165,7 @@ export function TransactionModal({
                                     handleChange('category', value)
                                 }
                             >
-                                <SelectTrigger>
+                                <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Select category" />
                                 </SelectTrigger>
                                 <SelectContent>

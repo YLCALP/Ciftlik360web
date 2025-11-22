@@ -16,6 +16,8 @@ import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+import { ModeToggle } from '@/components/mode-toggle';
+
 export function Header() {
     const router = useRouter();
     const supabase = createClient();
@@ -39,6 +41,7 @@ export function Header() {
                 </div>
             </div>
             <div className="flex items-center gap-4">
+                <ModeToggle />
                 <Button variant="ghost" size="icon">
                     <Bell className="h-5 w-5" />
                 </Button>

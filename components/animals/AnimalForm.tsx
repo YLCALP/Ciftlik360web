@@ -67,7 +67,7 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
             birth_date: initialData?.birth_date || '',
             weight: initialData?.weight?.toString() || '',
             purchase_price: initialData?.purchase_price?.toString() || '0',
-            purchase_date: initialData?.purchase_date || new Date().toISOString().split('T')[0],
+            purchase_date: initialData?.purchase_date || format(new Date(), 'yyyy-MM-dd'),
             status: initialData?.status || 'Active',
             notes: initialData?.notes || '',
         },
@@ -220,7 +220,7 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                                         <Calendar
                                             mode="single"
                                             selected={field.value ? new Date(field.value) : undefined}
-                                            onSelect={(date) => field.onChange(date ? date.toISOString().split('T')[0] : '')}
+                                            onSelect={(date) => field.onChange(date ? format(date, 'yyyy-MM-dd') : '')}
                                             disabled={(date) =>
                                                 date > new Date() || date < new Date("1900-01-01")
                                             }
@@ -261,7 +261,7 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                                         <Calendar
                                             mode="single"
                                             selected={field.value ? new Date(field.value) : undefined}
-                                            onSelect={(date) => field.onChange(date ? date.toISOString().split('T')[0] : '')}
+                                            onSelect={(date) => field.onChange(date ? format(date, 'yyyy-MM-dd') : '')}
                                             disabled={(date) =>
                                                 date > new Date() || date < new Date("1900-01-01")
                                             }

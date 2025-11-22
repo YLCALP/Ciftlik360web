@@ -7,9 +7,10 @@ import { AnimalForm } from '@/components/animals/AnimalForm';
 import { SellAnimalDialog } from '@/components/animals/SellAnimalDialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search } from 'lucide-react';
+import { Plus, Search, Download } from 'lucide-react';
 import { createAnimalPurchaseTransaction, createAnimalSaleTransaction, updateAnimalPurchaseTransaction } from '@/lib/transactions';
 import { Animal } from '@/lib/types';
+import { toast } from '@/lib/toast';
 import {
     Dialog,
     DialogContent,
@@ -19,6 +20,24 @@ import {
     DialogFooter,
     DialogDescription,
 } from '@/components/ui/dialog';
+import { Card, CardContent } from '@/components/ui/card';
+import { TableSkeleton } from '@/components/shared/TableSkeleton';
+import { EmptyState } from '@/components/ui/empty-state';
+import { Beef } from 'lucide-react';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { exportToExcel, exportToPDF } from '@/lib/export';
 
 export default function AnimalsPage() {
     const [animals, setAnimals] = useState<Animal[]>([]);
@@ -31,6 +50,8 @@ export default function AnimalsPage() {
     const [selectedAnimal, setSelectedAnimal] = useState<Animal | undefined>(undefined);
     const [animalToDelete, setAnimalToDelete] = useState<string | null>(null);
     const [animalToSell, setAnimalToSell] = useState<Animal | null>(null);
+    const [statusFilter, setStatusFilter] = useState<string>('all');
+    const [typeFilter, setTypeFilter] = useState<string>('all');
 
     const supabase = createClient();
 
@@ -57,10 +78,16 @@ export default function AnimalsPage() {
         fetchAnimals();
     }, [supabase]);
 
-    const filteredAnimals = animals.filter((animal) =>
-        (animal.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
-        animal.tag_number.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredAnimals = animals.filter((animal) => {
+        const matchesSearch =
+            animal.tag_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (animal.name?.toLowerCase() || '').includes(searchQuery.toLowerCase());
+
+        const matchesStatus = statusFilter === 'all' || animal.status?.toLowerCase() === statusFilter.toLowerCase();
+        const matchesType = typeFilter === 'all' || animal.species?.toLowerCase() === typeFilter.toLowerCase();
+
+        return matchesSearch && matchesStatus && matchesType;
+    });
 
     const handleCreate = async (values: any) => {
         try {
@@ -90,8 +117,10 @@ export default function AnimalsPage() {
 
             setAnimals([data, ...animals]);
             setIsAddDialogOpen(false);
+            toast.success('Hayvan eklendi!', `${values.tag_number} başarıyla sisteme eklendi.`);
         } catch (error) {
             console.error('Error creating animal:', error);
+            toast.error('Hata!', 'Hayvan eklenirken bir sorun oluştu.');
         }
     };
 
@@ -125,8 +154,10 @@ export default function AnimalsPage() {
             setAnimals(animals.map((a) => (a.id === data.id ? data : a)));
             setIsEditDialogOpen(false);
             setSelectedAnimal(undefined);
+            toast.success('Hayvan güncellendi!', 'Bilgiler başarıyla güncellendi.');
         } catch (error) {
             console.error('Error updating animal:', error);
+            toast.error('Hata!', 'Hayvan güncellenirken bir sorun oluştu.');
         }
     };
 
@@ -138,6 +169,19 @@ export default function AnimalsPage() {
     const confirmDelete = async () => {
         if (!animalToDelete) return;
         try {
+            // First, delete related transactions
+            const { error: transactionError } = await supabase
+                .from('transactions')
+                .delete()
+                .eq('animal_id', animalToDelete);
+
+            if (transactionError) {
+                console.error('Error deleting related transactions:', transactionError);
+                toast.error('Hata!', 'İlişkili kayıtlar silinirken bir sorun oluştu.');
+                return;
+            }
+
+            // Then delete the animal
             const { error } = await supabase
                 .from('animals')
                 .delete()
@@ -145,14 +189,17 @@ export default function AnimalsPage() {
 
             if (error) {
                 console.error('Error deleting animal:', error);
+                toast.error('Hata!', 'Hayvan silinirken bir sorun oluştu.');
                 return;
             }
 
             setAnimals(animals.filter((a) => a.id !== animalToDelete));
             setIsDeleteDialogOpen(false);
             setAnimalToDelete(null);
+            toast.success('Hayvan silindi!', 'Kayıt başarıyla silindi.');
         } catch (error) {
             console.error('Error deleting animal:', error);
+            toast.error('Hata!', 'Hayvan silinirken bir sorun oluştu.');
         }
     };
 
@@ -201,8 +248,10 @@ export default function AnimalsPage() {
             ));
             setIsSellDialogOpen(false);
             setAnimalToSell(null);
+            toast.success('Hayvan satıldı!', `${animalToSell.tag_number} başarıyla satıldı olarak işaretlendi.`);
         } catch (error) {
             console.error('Error selling animal:', error);
+            toast.error('Hata!', 'Satış işlemi sırasında bir sorun oluştu.');
         }
     };
 
@@ -212,29 +261,81 @@ export default function AnimalsPage() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 animate-fade-in">
             <div className="flex items-center justify-between">
                 <h2 className="text-3xl font-bold tracking-tight">Animals</h2>
-                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                    <DialogTrigger asChild>
-                        <Button>
-                            <Plus className="mr-2 h-4 w-4" /> Add Animal
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-                        <DialogHeader>
-                            <DialogTitle>Add New Animal</DialogTitle>
-                        </DialogHeader>
-                        <AnimalForm
-                            onSubmit={handleCreate}
-                            onCancel={() => setIsAddDialogOpen(false)}
-                        />
-                    </DialogContent>
-                </Dialog>
+                <div className="flex gap-2">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline">
+                                <Download className="mr-2 h-4 w-4" /> Dışa Aktar
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuItem onClick={() => {
+                                const success = exportToExcel(
+                                    filteredAnimals.map((a: Animal) => ({
+                                        'Küpe No': a.tag_number,
+                                        'İsim': a.name || '-',
+                                        'Tür': a.species,
+                                        'Irk': a.breed || '-',
+                                        'Cinsiyet': a.gender,
+                                        'Doğum Tarihi': a.birth_date || '-',
+                                        'Kilo': a.weight || '-',
+                                        'Alış Fiyatı': a.purchase_price,
+                                        'Durum': a.status || 'Active'
+                                    })),
+                                    'Hayvanlar'
+                                );
+                                if (success) toast.success('Başarılı!', 'Excel dosyası indirildi.');
+                                else toast.error('Hata!', 'Dışa aktarma başarısız.');
+                            }}>
+                                Excel (.xlsx)
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => {
+                                const success = exportToPDF(
+                                    filteredAnimals,
+                                    [
+                                        { header: 'Küpe No', dataKey: 'tag_number' },
+                                        { header: 'İsim', dataKey: 'name' },
+                                        { header: 'Tür', dataKey: 'species' },
+                                        { header: 'Irk', dataKey: 'breed' },
+                                        { header: 'Cinsiyet', dataKey: 'gender' },
+                                        { header: 'Durum', dataKey: 'status' },
+                                    ],
+                                    'Hayvanlar',
+                                    'Hayvan Listesi'
+                                );
+                                if (success) toast.success('Başarılı!', 'PDF dosyası indirildi.');
+                                else toast.error('Hata!', 'Dışa aktarma başarısız.');
+                            }}>
+                                PDF (.pdf)
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button>
+                                <Plus className="mr-2 h-4 w-4" /> Add Animal
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+                            <DialogHeader>
+                                <DialogTitle>Add New Animal</DialogTitle>
+                            </DialogHeader>
+                            <AnimalForm
+                                onSubmit={handleCreate}
+                                onCancel={() => setIsAddDialogOpen(false)}
+                            />
+                        </DialogContent>
+                    </Dialog>
+                </div>
             </div>
 
-            <div className="flex items-center gap-4">
-                <div className="relative w-64">
+
+
+            <div className="flex flex-col sm:flex-row items-center gap-4 animate-slide-up delay-100">
+                <div className="relative w-full sm:w-64">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
                         placeholder="Search animals..."
@@ -243,17 +344,59 @@ export default function AnimalsPage() {
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-full sm:w-[180px]">
+                        <SelectValue placeholder="Filter by Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Statuses</SelectItem>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="sold">Sold</SelectItem>
+                        <SelectItem value="sick">Sick</SelectItem>
+                        <SelectItem value="pregnant">Pregnant</SelectItem>
+                    </SelectContent>
+                </Select>
+                <Select value={typeFilter} onValueChange={setTypeFilter}>
+                    <SelectTrigger className="w-full sm:w-[180px]">
+                        <SelectValue placeholder="Filter by Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Types</SelectItem>
+                        <SelectItem value="Cow">Cow</SelectItem>
+                        <SelectItem value="Sheep">Sheep</SelectItem>
+                        <SelectItem value="Goat">Goat</SelectItem>
+                        <SelectItem value="Chicken">Chicken</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
 
+
+
+
+
             {loading ? (
-                <div>Loading...</div>
-            ) : (
-                <AnimalTable
-                    animals={filteredAnimals}
-                    onDelete={handleDeleteClick}
-                    onEdit={handleEditClick}
-                    onSell={handleSellClick}
+                <TableSkeleton />
+            ) : filteredAnimals.length === 0 ? (
+                <EmptyState
+                    icon={Beef}
+                    title="Henüz hayvan eklenmemiş"
+                    description="Çiftliğinize yeni hayvanlar ekleyerek takibini yapmaya başlayın."
+                    actionLabel="Hayvan Ekle"
+                    onAction={() => setIsAddDialogOpen(true)}
                 />
+            ) : (
+                <div className="animate-slide-up delay-200">
+                    <Card>
+                        <CardContent className="p-0">
+                            <AnimalTable
+                                animals={filteredAnimals}
+                                onDelete={handleDeleteClick}
+                                onEdit={handleEditClick}
+                                onSell={handleSellClick}
+                            />
+                        </CardContent>
+                    </Card>
+                </div>
             )}
 
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
