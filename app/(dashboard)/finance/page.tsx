@@ -117,59 +117,6 @@ export default function FinancePage() {
 
     return (
         <div className="space-y-6 animate-fade-in">
-            <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-bold tracking-tight">Finance</h2>
-                <div className="flex gap-2">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline">
-                                <Download className="mr-2 h-4 w-4" /> Dışa Aktar
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuItem onClick={() => {
-                                const success = exportToExcel(
-                                    filteredTransactions.map((t: Transaction) => ({
-                                        'Tarih': t.date,
-                                        'Açıklama': t.description,
-                                        'Kategori': t.category,
-                                        'Tür': t.type === 'income' ? 'Gelir' : 'Gider',
-                                        'Tutar': t.amount,
-                                        'Notlar': t.notes || '-',
-                                    })),
-                                    'İşlemler'
-                                );
-                                if (success) toast.success('Başarılı!', 'Excel dosyası indirildi.');
-                                else toast.error('Hata!', 'Dışa aktarma başarısız.');
-                            }}>
-                                Excel (.xlsx)
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => {
-                                const success = exportToPDF(
-                                    filteredTransactions,
-                                    [
-                                        { header: 'Tarih', dataKey: 'date' },
-                                        { header: 'Açıklama', dataKey: 'description' },
-                                        { header: 'Kategori', dataKey: 'category' },
-                                        { header: 'Tür', dataKey: 'type' },
-                                        { header: 'Tutar', dataKey: 'amount' },
-                                    ],
-                                    'İşlemler',
-                                    'Finans İşlemler Listesi'
-                                );
-                                if (success) toast.success('Başarılı!', 'PDF dosyası indirildi.');
-                                else toast.error('Hata!', 'Dışa aktarma başarısız.');
-                            }}>
-                                PDF (.pdf)
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                    <Button onClick={() => setIsModalOpen(true)}>
-                        <Plus className="mr-2 h-4 w-4" /> Add Transaction
-                    </Button>
-                </div>
-            </div>
-
             <div className="flex gap-4 items-end bg-card p-4 rounded-lg border shadow-sm animate-slide-up delay-100">
                 <div className="grid gap-1.5">
                     <Label htmlFor="start-date">Start Date</Label>
@@ -254,6 +201,55 @@ export default function FinancePage() {
                         Clear Filter
                     </Button>
                 )}
+                <div className="flex gap-2 ml-auto mb-0.5">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline">
+                                <Download className="mr-2 h-4 w-4" /> Dışa Aktar
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuItem onClick={() => {
+                                const success = exportToExcel(
+                                    filteredTransactions.map((t: Transaction) => ({
+                                        'Tarih': t.date,
+                                        'Açıklama': t.description,
+                                        'Kategori': t.category,
+                                        'Tür': t.type === 'income' ? 'Gelir' : 'Gider',
+                                        'Tutar': t.amount,
+                                        'Notlar': t.notes || '-',
+                                    })),
+                                    'İşlemler'
+                                );
+                                if (success) toast.success('Başarılı!', 'Excel dosyası indirildi.');
+                                else toast.error('Hata!', 'Dışa aktarma başarısız.');
+                            }}>
+                                Excel (.xlsx)
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => {
+                                const success = exportToPDF(
+                                    filteredTransactions,
+                                    [
+                                        { header: 'Tarih', dataKey: 'date' },
+                                        { header: 'Açıklama', dataKey: 'description' },
+                                        { header: 'Kategori', dataKey: 'category' },
+                                        { header: 'Tür', dataKey: 'type' },
+                                        { header: 'Tutar', dataKey: 'amount' },
+                                    ],
+                                    'İşlemler',
+                                    'Finans İşlemler Listesi'
+                                );
+                                if (success) toast.success('Başarılı!', 'PDF dosyası indirildi.');
+                                else toast.error('Hata!', 'Dışa aktarma başarısız.');
+                            }}>
+                                PDF (.pdf)
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <Button onClick={() => setIsModalOpen(true)}>
+                        <Plus className="mr-2 h-4 w-4" /> Add Transaction
+                    </Button>
+                </div>
 
             </div>
 

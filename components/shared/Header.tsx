@@ -1,8 +1,7 @@
 'use client';
 
-import { Bell, Search, User, Settings, LogOut } from 'lucide-react';
+import { Bell, User, Settings, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { MobileNav } from '@/components/shared/MobileNav';
 import {
     DropdownMenu,
@@ -13,13 +12,31 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { createClient } from '@/lib/supabase/client';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 
 import { ModeToggle } from '@/components/mode-toggle';
 
+// Sayfa isimlerini Türkçe'ye çevir
+const getPageTitle = (pathname: string): string => {
+    const segments = pathname.split('/').filter(Boolean);
+    const currentPage = segments[0] || 'dashboard';
+
+    const pageTitles: Record<string, string> = {
+        'dashboard': 'Genel Bakış',
+        'animals': 'Hayvanlar',
+        'inventory': 'Envanter',
+        'finance': 'Finans',
+        'reports': 'Raporlar',
+        'settings': 'Ayarlar',
+    };
+
+    return pageTitles[currentPage] || currentPage.charAt(0).toUpperCase() + currentPage.slice(1);
+};
+
 export function Header() {
     const router = useRouter();
+    const pathname = usePathname();
     const supabase = createClient();
 
     const handleLogout = async () => {
@@ -31,14 +48,7 @@ export function Header() {
         <header className="flex h-16 items-center justify-between border-b bg-card px-6">
             <div className="flex items-center gap-4">
                 <MobileNav />
-                <div className="relative w-64 hidden md:block">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                        type="search"
-                        placeholder="Search..."
-                        className="w-full bg-background pl-9"
-                    />
-                </div>
+                <h1 className="text-xl font-semibold">{getPageTitle(pathname)}</h1>
             </div>
             <div className="flex items-center gap-4">
                 <ModeToggle />

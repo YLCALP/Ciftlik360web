@@ -136,11 +136,8 @@ export default function DashboardPage() {
 
     return (
         <div className="space-y-6 animate-fade-in">
-            <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-bold tracking-tight">Genel Bakış</h2>
-                <div className="text-sm text-muted-foreground">
-                    Son güncelleme: {format(new Date(), 'HH:mm')}
-                </div>
+            <div className="flex items-center justify-end">
+
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

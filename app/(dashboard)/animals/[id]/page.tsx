@@ -110,7 +110,6 @@ export default function AnimalDetailPage() {
                 <Button variant="ghost" size="icon" onClick={() => router.back()}>
                     <ArrowLeft className="h-4 w-4" />
                 </Button>
-                <h2 className="text-3xl font-bold tracking-tight">{animal.name || animal.tag_number}</h2>
                 <Badge variant={animal.status === 'Active' ? 'default' : 'secondary'}>
                     {animal.status}
                 </Badge>

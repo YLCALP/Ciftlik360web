@@ -185,9 +185,28 @@ export default function InventoryPage() {
 
     return (
         <div className="space-y-6 animate-fade-in">
-            <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-bold tracking-tight">Inventory</h2>
-                <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row items-center gap-4 animate-slide-up delay-100">
+                <div className="relative w-full sm:w-64">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                        placeholder="Search inventory..."
+                        className="pl-9"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                </div>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-full sm:w-[180px]">
+                        <SelectValue placeholder="Filter by Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Items</SelectItem>
+                        <SelectItem value="in">In Stock</SelectItem>
+                        <SelectItem value="low">Low Stock (&lt; 10)</SelectItem>
+                        <SelectItem value="out">Out of Stock</SelectItem>
+                    </SelectContent>
+                </Select>
+                <div className="flex gap-2 w-full sm:w-auto sm:ml-auto">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline">
@@ -239,30 +258,6 @@ export default function InventoryPage() {
                         <Plus className="mr-2 h-4 w-4" /> Add Item
                     </Button>
                 </div>
-            </div>
-
-
-            <div className="flex flex-col sm:flex-row items-center gap-4 animate-slide-up delay-100">
-                <div className="relative w-full sm:w-64">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                        placeholder="Search inventory..."
-                        className="pl-9"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                </div>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-full sm:w-[180px]">
-                        <SelectValue placeholder="Filter by Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">All Items</SelectItem>
-                        <SelectItem value="in">In Stock</SelectItem>
-                        <SelectItem value="low">Low Stock (&lt; 10)</SelectItem>
-                        <SelectItem value="out">Out of Stock</SelectItem>
-                    </SelectContent>
-                </Select>
             </div>
 
             {
