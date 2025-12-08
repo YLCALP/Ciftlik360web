@@ -1,36 +1,120 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Çiftlik360
 
-## Getting Started
+Çiftlik yönetimi için geliştirdiğim web uygulaması. Hayvanlarınızı takip edin, yem stoklarınızı yönetin, gelir-gider kayıtlarınızı tutun.
 
-First, run the development server:
+## Neler Var?
+
+**Hayvan Takibi**
+- Hayvan kayıt sistemi (küpe no, tür, ırk, cinsiyet)
+- Alış/satış işlemleri
+- Durum takibi (aktif, satıldı, hasta, gebe)
+- Excel/PDF export
+
+**Envanter**
+- Yem stok yönetimi
+- Tedarikçi bilgileri
+- Son kullanma tarihi takibi
+
+**Finans**
+- Gelir/gider kayıtları
+- Otomatik işlem kayıtları (hayvan alım/satım)
+- Aylık grafikler
+
+**Ayarlar**
+- Profil bilgileri
+- Çiftlik detayları (alan, kapasite, vb.)
+
+**Güvenlik**
+- Supabase auth
+- CSRF koruması
+- Güvenli oturum yönetimi
+
+## Teknolojiler
+
+**Frontend**
+- Next.js 16 (App Router)
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- Shadcn UI
+
+**Backend**
+- Supabase (PostgreSQL, Auth, RLS)
+
+**Diğer**
+- React Hook Form + Zod
+- Recharts
+- next-themes (dark mode)
+
+## Kurulum
+
+```bash
+git clone https://github.com/yourusername/ciftlik360web.git
+cd ciftlik360web
+npm install
+```
+
+`.env.local` dosyası oluştur:
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
+```
+
+Supabase'de `database.md` dosyasındaki SQL'i çalıştır.
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Klasör Yapısı
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+app/
+├── (auth)/           # login, signup
+├── (dashboard)/      # ana sayfalar
+│   ├── animals/
+│   ├── inventory/
+│   ├── finance/
+│   └── settings/
+└── api/auth/logout/
 
-## Learn More
+components/
+├── animals/
+├── settings/
+├── shared/
+└── ui/              # shadcn
 
-To learn more about Next.js, take a look at the following resources:
+lib/
+├── supabase/
+├── csrf.ts
+├── session.ts
+└── types.ts
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Güvenlik
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- HTTP-only cookies
+- CSRF token
+- CSP headers
+- Oturum timeout (1 saat)
+- RLS ile veri izolasyonu
 
-## Deploy on Vercel
+## Veritabanı
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `users` - kullanıcılar
+- `animals` - hayvanlar
+- `feed_inventory` - yem stoku
+- `transactions` - gelir/gider
+- `farm_info` - çiftlik bilgileri
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Detay için `database.md`
+
+## Katkı
+
+PR'lar kabul ediliyor.
+
+---
+
+MIT License
