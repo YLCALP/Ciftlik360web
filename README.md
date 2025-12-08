@@ -109,12 +109,3 @@ lib/
 - `transactions` - gelir/gider
 - `farm_info` - çiftlik bilgileri
 
-Detay için `database.md`
-
-## Katkı
-
-PR'lar kabul ediliyor.
-
----
-
-MIT License
