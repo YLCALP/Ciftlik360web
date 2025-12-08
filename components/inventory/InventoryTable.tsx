@@ -47,6 +47,17 @@ export function InventoryTable({ items, onStockIn, onStockOut }: InventoryTableP
         return sortConfig.direction === 'asc' ? comparison : -comparison;
     });
 
+    const translateFeedType = (type: string) => {
+        const translations: Record<string, string> = {
+            'Feed': 'Yem',
+            'Medicine': 'İlaç',
+            'Supplement': 'Takviye',
+            'Equipment': 'Ekipman',
+            'Other': 'Diğer',
+        };
+        return translations[type] || type;
+    };
+
     return (
         <div className="rounded-md border">
             <Table>
@@ -54,31 +65,31 @@ export function InventoryTable({ items, onStockIn, onStockOut }: InventoryTableP
                     <TableRow>
                         <TableHead onClick={() => handleSort('feed_name')} className="cursor-pointer hover:bg-muted/50 transition-colors">
                             <div className="flex items-center gap-2">
-                                Name
+                                Ürün Adı
                                 <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
                             </div>
                         </TableHead>
                         <TableHead onClick={() => handleSort('feed_type')} className="cursor-pointer hover:bg-muted/50 transition-colors">
                             <div className="flex items-center gap-2">
-                                Type
+                                Tür
                                 <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
                             </div>
                         </TableHead>
                         <TableHead onClick={() => handleSort('quantity')} className="cursor-pointer hover:bg-muted/50 transition-colors">
                             <div className="flex items-center gap-2">
-                                Quantity
+                                Miktar
                                 <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
                             </div>
                         </TableHead>
-                        <TableHead>Unit</TableHead>
-                        <TableHead>Status</TableHead>
+                        <TableHead>Birim</TableHead>
+                        <TableHead>Durum</TableHead>
                         <TableHead onClick={() => handleSort('updated_at')} className="cursor-pointer hover:bg-muted/50 transition-colors">
                             <div className="flex items-center gap-2">
-                                Last Updated
+                                Son Güncelleme
                                 <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
                             </div>
                         </TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead className="text-right">İşlemler</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -86,7 +97,7 @@ export function InventoryTable({ items, onStockIn, onStockOut }: InventoryTableP
                         return (
                             <TableRow key={item.id}>
                                 <TableCell className="font-medium">{item.feed_name}</TableCell>
-                                <TableCell>{item.feed_type}</TableCell>
+                                <TableCell>{translateFeedType(item.feed_type)}</TableCell>
                                 <TableCell>
                                     <div className="flex items-center gap-2">
                                         {item.quantity}
@@ -95,7 +106,7 @@ export function InventoryTable({ items, onStockIn, onStockOut }: InventoryTableP
                                 <TableCell>{item.unit}</TableCell>
                                 <TableCell>
                                     <Badge variant={item.quantity === 0 ? 'destructive' : 'outline'}>
-                                        {item.quantity === 0 ? 'Out of Stock' : 'In Stock'}
+                                        {item.quantity === 0 ? 'Stok Yok' : 'Stokta'}
                                     </Badge>
                                 </TableCell>
                                 <TableCell>{new Date(item.updated_at).toLocaleDateString()}</TableCell>
@@ -107,7 +118,7 @@ export function InventoryTable({ items, onStockIn, onStockOut }: InventoryTableP
                                             className="text-green-600 hover:text-green-700"
                                             onClick={() => onStockIn(item)}
                                         >
-                                            <ArrowUp className="mr-1 h-4 w-4" /> In
+                                            <ArrowUp className="mr-1 h-4 w-4" /> Giriş
                                         </Button>
                                         <Button
                                             variant="outline"
@@ -115,7 +126,7 @@ export function InventoryTable({ items, onStockIn, onStockOut }: InventoryTableP
                                             className="text-red-600 hover:text-red-700"
                                             onClick={() => onStockOut(item)}
                                         >
-                                            <ArrowDown className="mr-1 h-4 w-4" /> Out
+                                            <ArrowDown className="mr-1 h-4 w-4" /> Çıkış
                                         </Button>
                                     </div>
                                 </TableCell>

@@ -30,7 +30,7 @@ import { Animal } from '@/lib/types';
 
 const formSchema = z.object({
     sold_price: z.string().refine((val) => !isNaN(Number(val.replace(/\./g, '').replace(',', '.'))), {
-        message: 'Must be a number',
+        message: 'Sayı olmalıdır',
     }),
     sold_date: z.date(),
 });
@@ -90,7 +90,7 @@ export function SellAnimalDialog({ animal, isOpen, onClose, onConfirm }: SellAni
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>
-                        Sell Animal - {animal?.tag_number} ({animal?.species})
+                        Hayvan Sat - {animal?.tag_number} ({animal?.species})
                     </DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
@@ -100,11 +100,11 @@ export function SellAnimalDialog({ animal, isOpen, onClose, onConfirm }: SellAni
                             name="sold_price"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Sale Price</FormLabel>
+                                    <FormLabel>Satış Fiyatı</FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            placeholder="Enter sale price"
+                                            placeholder="Satış fiyatını girin"
                                             onChange={(e) => {
                                                 const rawValue = e.target.value.replace(/\./g, '');
                                                 if (!isNaN(Number(rawValue))) {
@@ -123,7 +123,7 @@ export function SellAnimalDialog({ animal, isOpen, onClose, onConfirm }: SellAni
                             name="sold_date"
                             render={({ field }) => (
                                 <FormItem className="flex flex-col">
-                                    <FormLabel>Sale Date</FormLabel>
+                                    <FormLabel>Satış Tarihi</FormLabel>
                                     <Popover>
                                         <PopoverTrigger asChild>
                                             <FormControl>
@@ -137,7 +137,7 @@ export function SellAnimalDialog({ animal, isOpen, onClose, onConfirm }: SellAni
                                                     {field.value ? (
                                                         format(field.value, "PPP")
                                                     ) : (
-                                                        <span>Pick a date</span>
+                                                        <span>Tarih seçin</span>
                                                     )}
                                                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                                 </Button>
@@ -162,10 +162,10 @@ export function SellAnimalDialog({ animal, isOpen, onClose, onConfirm }: SellAni
 
                         <DialogFooter>
                             <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
-                                Cancel
+                                İptal
                             </Button>
                             <Button type="submit" disabled={isLoading}>
-                                {isLoading ? 'Selling...' : 'Confirm Sale'}
+                                {isLoading ? 'Satılıyor...' : 'Satışı Onayla'}
                             </Button>
                         </DialogFooter>
                     </form>

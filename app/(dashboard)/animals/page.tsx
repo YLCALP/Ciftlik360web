@@ -266,7 +266,7 @@ export default function AnimalsPage() {
                 <div className="relative w-full sm:w-64">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder="Search animals..."
+                        placeholder="Hayvan ara..."
                         className="pl-9"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -274,26 +274,26 @@ export default function AnimalsPage() {
                 </div>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                     <SelectTrigger className="w-full sm:w-[180px]">
-                        <SelectValue placeholder="Filter by Status" />
+                        <SelectValue placeholder="Duruma göre filtrele" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="all">All Statuses</SelectItem>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="sold">Sold</SelectItem>
-                        <SelectItem value="sick">Sick</SelectItem>
-                        <SelectItem value="pregnant">Pregnant</SelectItem>
+                        <SelectItem value="all">Tüm Durumlar</SelectItem>
+                        <SelectItem value="active">Aktif</SelectItem>
+                        <SelectItem value="sold">Satıldı</SelectItem>
+                        <SelectItem value="sick">Hasta</SelectItem>
+                        <SelectItem value="pregnant">Gebe</SelectItem>
                     </SelectContent>
                 </Select>
                 <Select value={typeFilter} onValueChange={setTypeFilter}>
                     <SelectTrigger className="w-full sm:w-[180px]">
-                        <SelectValue placeholder="Filter by Type" />
+                        <SelectValue placeholder="Türe göre filtrele" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="all">All Types</SelectItem>
-                        <SelectItem value="Cow">Cow</SelectItem>
-                        <SelectItem value="Sheep">Sheep</SelectItem>
-                        <SelectItem value="Goat">Goat</SelectItem>
-                        <SelectItem value="Chicken">Chicken</SelectItem>
+                        <SelectItem value="all">Tüm Türler</SelectItem>
+                        <SelectItem value="Cow">İnek</SelectItem>
+                        <SelectItem value="Sheep">Koyun</SelectItem>
+                        <SelectItem value="Goat">Keçi</SelectItem>
+                        <SelectItem value="Chicken">Tavuk</SelectItem>
                     </SelectContent>
                 </Select>
                 <div className="flex gap-2 w-full sm:w-auto sm:ml-auto">
@@ -348,12 +348,12 @@ export default function AnimalsPage() {
                     <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                         <DialogTrigger asChild>
                             <Button>
-                                <Plus className="mr-2 h-4 w-4" /> Add Animal
+                                <Plus className="mr-2 h-4 w-4" /> Hayvan Ekle
                             </Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
                             <DialogHeader>
-                                <DialogTitle>Add New Animal</DialogTitle>
+                                <DialogTitle>Yeni Hayvan Ekle</DialogTitle>
                             </DialogHeader>
                             <AnimalForm
                                 onSubmit={handleCreate}
@@ -396,7 +396,7 @@ export default function AnimalsPage() {
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                 <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
-                        <DialogTitle>Edit Animal</DialogTitle>
+                        <DialogTitle>Hayvanı Düzenle</DialogTitle>
                     </DialogHeader>
                     {selectedAnimal && (
                         <AnimalForm
@@ -411,17 +411,17 @@ export default function AnimalsPage() {
             <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Are you sure?</DialogTitle>
+                        <DialogTitle>Emin misiniz?</DialogTitle>
                         <DialogDescription>
-                            This action cannot be undone. This will permanently delete the animal record.
+                            Bu işlem geri alınamaz. Hayvan kaydı kalıcı olarak silinecektir.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
-                            Cancel
+                            İptal
                         </Button>
                         <Button variant="destructive" onClick={confirmDelete}>
-                            Delete
+                            Sil
                         </Button>
                     </DialogFooter>
                 </DialogContent>

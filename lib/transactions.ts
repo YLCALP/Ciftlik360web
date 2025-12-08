@@ -16,7 +16,7 @@ export async function createAnimalPurchaseTransaction(
         type: 'expense',
         category: 'animal_purchase',
         amount: purchasePrice,
-        description: `Purchased ${species} - ${tagNumber}`,
+        description: `Satın Alındı ${species} - ${tagNumber}`,
         date: purchaseDate,
         animal_id: animalId,
         is_automatic: true,

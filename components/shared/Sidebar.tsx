@@ -16,22 +16,22 @@ import { Button } from '@/components/ui/button';
 
 const navItems = [
     {
-        title: 'Dashboard',
+        title: 'Ana Sayfa',
         href: '/',
         icon: LayoutDashboard,
     },
     {
-        title: 'Animals',
+        title: 'Hayvanlar',
         href: '/animals',
         icon: Beef,
     },
     {
-        title: 'Inventory',
+        title: 'Envanter',
         href: '/inventory',
         icon: Warehouse,
     },
     {
-        title: 'Finance',
+        title: 'Finans',
         href: '/finance',
         icon: BadgeTurkishLira,
     },

@@ -31,6 +31,30 @@ export function TransactionList({ transactions }: TransactionListProps) {
         }));
     };
 
+    const translateDescription = (description: string) => {
+        return description
+            .replace(/Purchased/g, 'Satın Alındı')
+            .replace(/Sold/g, 'Satıldı')
+            .replace(/Feed/g, 'Yem')
+            .replace(/Cow/g, 'İnek')
+            .replace(/Sheep/g, 'Koyun')
+            .replace(/Goat/g, 'Keçi')
+            .replace(/Chicken/g, 'Tavuk');
+    };
+
+    const translateCategory = (category: string) => {
+        const translations: Record<string, string> = {
+            'animal_sale': 'Hayvan Satışı',
+            'animal_purchase': 'Hayvan Alımı',
+            'feed': 'Yem',
+            'medicine': 'İlaç',
+            'equipment': 'Ekipman',
+            'labor': 'İşçilik',
+            'other': 'Diğer',
+        };
+        return translations[category] || category.replace('_', ' ');
+    };
+
     const sortedTransactions = [...transactions].sort((a, b) => {
         if (!sortConfig.key) return 0;
 
@@ -52,26 +76,26 @@ export function TransactionList({ transactions }: TransactionListProps) {
                     <TableRow>
                         <TableHead onClick={() => handleSort('date')} className="cursor-pointer hover:bg-muted/50 transition-colors">
                             <div className="flex items-center gap-2">
-                                Date
+                                Tarih
                                 <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
                             </div>
                         </TableHead>
-                        <TableHead>Description</TableHead>
+                        <TableHead>Açıklama</TableHead>
                         <TableHead onClick={() => handleSort('category')} className="cursor-pointer hover:bg-muted/50 transition-colors">
                             <div className="flex items-center gap-2">
-                                Category
+                                Kategori
                                 <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
                             </div>
                         </TableHead>
                         <TableHead onClick={() => handleSort('type')} className="cursor-pointer hover:bg-muted/50 transition-colors">
                             <div className="flex items-center gap-2">
-                                Type
+                                Tür
                                 <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
                             </div>
                         </TableHead>
                         <TableHead onClick={() => handleSort('amount')} className="text-right cursor-pointer hover:bg-muted/50 transition-colors">
                             <div className="flex items-center justify-end gap-2">
-                                Amount
+                                Tutar
                                 <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
                             </div>
                         </TableHead>
@@ -80,14 +104,14 @@ export function TransactionList({ transactions }: TransactionListProps) {
                 <TableBody>
                     {sortedTransactions.map((transaction) => (
                         <TableRow key={transaction.id}>
-                            <TableCell>{new Date(transaction.date).toLocaleDateString()}</TableCell>
+                            <TableCell>{new Date(transaction.date).toLocaleDateString('tr-TR')}</TableCell>
                             <TableCell>
-                                {transaction.description}
+                                {translateDescription(transaction.description)}
                                 {transaction.is_automatic && (
-                                    <Badge variant="outline" className="ml-2 text-xs">Auto</Badge>
+                                    <Badge variant="outline" className="ml-2 text-xs">Otomatik</Badge>
                                 )}
                             </TableCell>
-                            <TableCell className="capitalize">{transaction.category.replace('_', ' ')}</TableCell>
+                            <TableCell className="capitalize">{translateCategory(transaction.category)}</TableCell>
                             <TableCell>
                                 <Badge
                                     variant={
@@ -99,7 +123,7 @@ export function TransactionList({ transactions }: TransactionListProps) {
                                             : 'bg-red-500 hover:bg-red-600'
                                     )}
                                 >
-                                    {transaction.type === 'income' ? 'Income' : 'Expense'}
+                                    {transaction.type === 'income' ? 'Gelir' : 'Gider'}
                                 </Badge>
                             </TableCell>
                             <TableCell

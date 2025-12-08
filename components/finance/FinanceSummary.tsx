@@ -14,6 +14,7 @@ import {
 } from 'recharts';
 
 import { format } from 'date-fns';
+import { tr } from 'date-fns/locale';
 
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
@@ -44,7 +45,7 @@ export function FinanceSummary({ transactions }: FinanceSummaryProps) {
     // Group transactions by month for chart
     const monthlyData = transactions.reduce((acc, t) => {
         const date = new Date(t.date);
-        const monthYear = format(date, 'MMM yyyy');
+        const monthYear = format(date, 'MMM yyyy', { locale: tr });
 
         const existing = acc.find((item) => item.name === monthYear);
         if (existing) {
@@ -70,7 +71,7 @@ export function FinanceSummary({ transactions }: FinanceSummaryProps) {
             <div className="grid gap-4 md:grid-cols-3">
                 <Card className="hover:scale-[1.02] transition-all duration-200 border-l-4 border-l-green-500">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Total Income</CardTitle>
+                        <CardTitle className="text-sm font-medium">Toplam Gelir</CardTitle>
                         <div className="h-8 w-8 rounded-full bg-green-500/10 flex items-center justify-center">
                             <ArrowUp className="h-4 w-4 text-green-500" />
                         </div>
@@ -83,7 +84,7 @@ export function FinanceSummary({ transactions }: FinanceSummaryProps) {
                 </Card>
                 <Card className="hover:scale-[1.02] transition-all duration-200 border-l-4 border-l-red-500">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
+                        <CardTitle className="text-sm font-medium">Toplam Gider</CardTitle>
                         <div className="h-8 w-8 rounded-full bg-red-500/10 flex items-center justify-center">
                             <ArrowDown className="h-4 w-4 text-red-500" />
                         </div>
@@ -96,7 +97,7 @@ export function FinanceSummary({ transactions }: FinanceSummaryProps) {
                 </Card>
                 <Card className="hover:scale-[1.02] transition-all duration-200 border-l-4 border-l-blue-500">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Net Balance</CardTitle>
+                        <CardTitle className="text-sm font-medium">Net Bakiye</CardTitle>
                         <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center">
                             <BadgeTurkishLira className="h-4 w-4 text-blue-500" />
                         </div>
@@ -111,7 +112,7 @@ export function FinanceSummary({ transactions }: FinanceSummaryProps) {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Monthly Income vs Expense</CardTitle>
+                    <CardTitle>Aylık Gelir ve Gider</CardTitle>
                 </CardHeader>
                 <CardContent className="pl-2">
                     <div className="h-[350px] w-full">
@@ -146,8 +147,8 @@ export function FinanceSummary({ transactions }: FinanceSummaryProps) {
                                         itemStyle={{ color: isDark ? '#fff' : '#000' }}
                                         labelStyle={{ color: '#9ca3af', marginBottom: '0.25rem' }}
                                     />
-                                    <Bar dataKey="income" fill="#10b981" radius={[6, 6, 0, 0]} name="Income" barSize={40} />
-                                    <Bar dataKey="expense" fill="#ef4444" radius={[6, 6, 0, 0]} name="Expense" barSize={40} />
+                                    <Bar dataKey="income" fill="#10b981" radius={[6, 6, 0, 0]} name="Gelir" barSize={40} />
+                                    <Bar dataKey="expense" fill="#ef4444" radius={[6, 6, 0, 0]} name="Gider" barSize={40} />
                                 </BarChart>
                             </ResponsiveContainer>
                         )}

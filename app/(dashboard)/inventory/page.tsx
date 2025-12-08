@@ -189,7 +189,7 @@ export default function InventoryPage() {
                 <div className="relative w-full sm:w-64">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder="Search inventory..."
+                        placeholder="Envanter ara..."
                         className="pl-9"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -197,13 +197,13 @@ export default function InventoryPage() {
                 </div>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                     <SelectTrigger className="w-full sm:w-[180px]">
-                        <SelectValue placeholder="Filter by Status" />
+                        <SelectValue placeholder="Duruma göre filtrele" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="all">All Items</SelectItem>
-                        <SelectItem value="in">In Stock</SelectItem>
-                        <SelectItem value="low">Low Stock (&lt; 10)</SelectItem>
-                        <SelectItem value="out">Out of Stock</SelectItem>
+                        <SelectItem value="all">Tüm Ürünler</SelectItem>
+                        <SelectItem value="in">Stokta</SelectItem>
+                        <SelectItem value="low">Düşük Stok (&lt; 10)</SelectItem>
+                        <SelectItem value="out">Stok Yok</SelectItem>
                     </SelectContent>
                 </Select>
                 <div className="flex gap-2 w-full sm:w-auto sm:ml-auto">
@@ -255,7 +255,7 @@ export default function InventoryPage() {
                         </DropdownMenuContent>
                     </DropdownMenu>
                     <Button onClick={() => setIsAddDialogOpen(true)}>
-                        <Plus className="mr-2 h-4 w-4" /> Add Item
+                        <Plus className="mr-2 h-4 w-4" /> Ürün Ekle
                     </Button>
                 </div>
             </div>
@@ -305,7 +305,7 @@ export default function InventoryPage() {
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
-                        <DialogTitle>Add Inventory Item</DialogTitle>
+                        <DialogTitle>Envanter Ürünü Ekle</DialogTitle>
                     </DialogHeader>
                     <InventoryForm
                         onSubmit={handleCreate}

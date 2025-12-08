@@ -22,11 +22,11 @@ export function MobileNav() {
             <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden">
                     <Menu className="h-5 w-5" />
-                    <span className="sr-only">Toggle menu</span>
+                    <span className="sr-only">Menüyü Aç/Kapat</span>
                 </Button>
             </SheetTrigger>
             <SheetContent side="left" className="p-0 w-64">
-                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <SheetTitle className="sr-only">Navigasyon Menüsü</SheetTitle>
                 <Sidebar />
             </SheetContent>
         </Sheet>

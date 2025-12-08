@@ -119,7 +119,7 @@ export default function FinancePage() {
         <div className="space-y-6 animate-fade-in">
             <div className="flex gap-4 items-end bg-card p-4 rounded-lg border shadow-sm animate-slide-up delay-100">
                 <div className="grid gap-1.5">
-                    <Label htmlFor="start-date">Start Date</Label>
+                    <Label htmlFor="start-date">Başlangıç Tarihi</Label>
                     <Popover>
                         <PopoverTrigger asChild>
                             <Button
@@ -132,7 +132,7 @@ export default function FinancePage() {
                                 {dateFilter.start ? (
                                     format(new Date(dateFilter.start), "PPP")
                                 ) : (
-                                    <span>Pick a date</span>
+                                    <span>Tarih seçin</span>
                                 )}
                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
@@ -148,7 +148,7 @@ export default function FinancePage() {
                     </Popover>
                 </div>
                 <div className="grid gap-1.5">
-                    <Label htmlFor="end-date">End Date</Label>
+                    <Label htmlFor="end-date">Bitiş Tarihi</Label>
                     <Popover>
                         <PopoverTrigger asChild>
                             <Button
@@ -161,7 +161,7 @@ export default function FinancePage() {
                                 {dateFilter.end ? (
                                     format(new Date(dateFilter.end), "PPP")
                                 ) : (
-                                    <span>Pick a date</span>
+                                    <span>Tarih seçin</span>
                                 )}
                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
@@ -177,15 +177,15 @@ export default function FinancePage() {
                     </Popover>
                 </div>
                 <div className="grid gap-1.5">
-                    <Label>Type</Label>
+                    <Label>Tür</Label>
                     <Select value={typeFilter} onValueChange={setTypeFilter}>
                         <SelectTrigger className="w-[200px]">
-                            <SelectValue placeholder="Filter by Type" />
+                            <SelectValue placeholder="Türe göre filtrele" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">All Transactions</SelectItem>
-                            <SelectItem value="income">Income</SelectItem>
-                            <SelectItem value="expense">Expense</SelectItem>
+                            <SelectItem value="all">Tüm İşlemler</SelectItem>
+                            <SelectItem value="income">Gelir</SelectItem>
+                            <SelectItem value="expense">Gider</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -198,7 +198,7 @@ export default function FinancePage() {
                         }}
                         className="mb-0.5"
                     >
-                        Clear Filter
+                        Filtreyi Temizle
                     </Button>
                 )}
                 <div className="flex gap-2 ml-auto mb-0.5">
@@ -247,7 +247,7 @@ export default function FinancePage() {
                         </DropdownMenuContent>
                     </DropdownMenu>
                     <Button onClick={() => setIsModalOpen(true)}>
-                        <Plus className="mr-2 h-4 w-4" /> Add Transaction
+                        <Plus className="mr-2 h-4 w-4" /> İşlem Ekle
                     </Button>
                 </div>
 

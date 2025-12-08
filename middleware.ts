@@ -1,5 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { setSecurityHeaders } from '@/lib/middleware-security';
+import { checkSessionExpiry } from '@/lib/session';
 
 export async function middleware(request: NextRequest) {
     let response = NextResponse.next({
@@ -37,6 +39,17 @@ export async function middleware(request: NextRequest) {
         data: { user },
     } = await supabase.auth.getUser();
 
+    // Check session expiry for authenticated users
+    if (user) {
+        const isSessionValid = await checkSessionExpiry();
+        if (!isSessionValid) {
+            // Session expired, redirect to login
+            await supabase.auth.signOut();
+            const loginRedirect = NextResponse.redirect(new URL('/login', request.url));
+            return setSecurityHeaders(loginRedirect);
+        }
+    }
+
     // Protected routes
     if (!user && !request.nextUrl.pathname.startsWith('/login') && !request.nextUrl.pathname.startsWith('/signup')) {
         // Allow access to public assets, api, etc.
@@ -49,16 +62,19 @@ export async function middleware(request: NextRequest) {
             request.nextUrl.pathname.includes('.'); // file extensions
 
         if (!isPublic) {
-            return NextResponse.redirect(new URL('/login', request.url));
+            const loginRedirect = NextResponse.redirect(new URL('/login', request.url));
+            return setSecurityHeaders(loginRedirect);
         }
     }
 
     // Redirect logged in users away from auth pages
     if (user && (request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/signup'))) {
-        return NextResponse.redirect(new URL('/', request.url));
+        const redirectResponse = NextResponse.redirect(new URL('/', request.url));
+        return setSecurityHeaders(redirectResponse);
     }
 
-    return response;
+    // Apply security headers to all responses
+    return setSecurityHeaders(response);
 }
 
 export const config = {

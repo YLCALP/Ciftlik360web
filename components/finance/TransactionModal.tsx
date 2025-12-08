@@ -89,12 +89,12 @@ export function TransactionModal({
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Add Transaction</DialogTitle>
+                    <DialogTitle>İşlem Ekle</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="date">Date</Label>
+                            <Label htmlFor="date">Tarih</Label>
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <Button
@@ -107,7 +107,7 @@ export function TransactionModal({
                                         {formData.date ? (
                                             format(new Date(formData.date), "PPP")
                                         ) : (
-                                            <span>Pick a date</span>
+                                            <span>Tarih seçin</span>
                                         )}
                                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                     </Button>
@@ -126,7 +126,7 @@ export function TransactionModal({
                             </Popover>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="amount">Amount</Label>
+                            <Label htmlFor="amount">Tutar</Label>
                             <Input
                                 id="amount"
                                 value={formatCurrency(formData.amount.toString())}
@@ -140,7 +140,7 @@ export function TransactionModal({
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="type">Type</Label>
+                            <Label htmlFor="type">Tür</Label>
                             <Select
                                 value={formData.type}
                                 onValueChange={(value) =>
@@ -149,16 +149,16 @@ export function TransactionModal({
                                 disabled={!!forcedType}
                             >
                                 <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Select type" />
+                                    <SelectValue placeholder="Tür seçin" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="income">Income</SelectItem>
-                                    <SelectItem value="expense">Expense</SelectItem>
+                                    <SelectItem value="income">Gelir</SelectItem>
+                                    <SelectItem value="expense">Gider</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="category">Category</Label>
+                            <Label htmlFor="category">Kategori</Label>
                             <Select
                                 value={formData.category}
                                 onValueChange={(value) =>
@@ -166,22 +166,22 @@ export function TransactionModal({
                                 }
                             >
                                 <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Select category" />
+                                    <SelectValue placeholder="Kategori seçin" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="animal_sale">Animal Sale</SelectItem>
-                                    <SelectItem value="animal_purchase">Animal Purchase</SelectItem>
-                                    <SelectItem value="feed">Feed</SelectItem>
-                                    <SelectItem value="medicine">Medicine</SelectItem>
-                                    <SelectItem value="equipment">Equipment</SelectItem>
-                                    <SelectItem value="labor">Labor</SelectItem>
-                                    <SelectItem value="other">Other</SelectItem>
+                                    <SelectItem value="animal_sale">Hayvan Satışı</SelectItem>
+                                    <SelectItem value="animal_purchase">Hayvan Alımı</SelectItem>
+                                    <SelectItem value="feed">Yem</SelectItem>
+                                    <SelectItem value="medicine">İlaç</SelectItem>
+                                    <SelectItem value="equipment">Ekipman</SelectItem>
+                                    <SelectItem value="labor">İşçilik</SelectItem>
+                                    <SelectItem value="other">Diğer</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="description">Description</Label>
+                        <Label htmlFor="description">Açıklama</Label>
                         <Input
                             id="description"
                             value={formData.description}
@@ -190,7 +190,7 @@ export function TransactionModal({
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="notes">Notes (Optional)</Label>
+                        <Label htmlFor="notes">Notlar (Opsiyonel)</Label>
                         <Input
                             id="notes"
                             value={formData.notes}
@@ -199,9 +199,9 @@ export function TransactionModal({
                     </div>
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={onClose}>
-                            Cancel
+                            İptal
                         </Button>
-                        <Button type="submit">Save Transaction</Button>
+                        <Button type="submit">İşlemi Kaydet</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

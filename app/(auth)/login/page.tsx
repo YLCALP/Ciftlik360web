@@ -21,10 +21,10 @@ import {
 
 const formSchema = z.object({
     email: z.string().email({
-        message: "Please enter a valid email address.",
+        message: "Geçerli bir e-posta adresi girin.",
     }),
     password: z.string().min(6, {
-        message: "Password must be at least 6 characters.",
+        message: "Şifre en az 6 karakter olmalıdır.",
     }),
 });
 
@@ -67,8 +67,8 @@ export default function LoginPage() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Sign In</CardTitle>
-                <CardDescription>Enter your email and password to access your account</CardDescription>
+                <CardTitle>Giriş Yap</CardTitle>
+                <CardDescription>Hesabınıza erişmek için e-posta ve şifrenizi girin</CardDescription>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
@@ -78,7 +78,7 @@ export default function LoginPage() {
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Email</FormLabel>
+                                    <FormLabel>E-posta</FormLabel>
                                     <FormControl>
                                         <Input placeholder="m@example.com" {...field} />
                                     </FormControl>
@@ -91,7 +91,7 @@ export default function LoginPage() {
                             name="password"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Password</FormLabel>
+                                    <FormLabel>Şifre</FormLabel>
                                     <FormControl>
                                         <Input type="password" {...field} />
                                     </FormControl>
@@ -101,16 +101,16 @@ export default function LoginPage() {
                         />
                         {error && <p className="text-sm text-red-500">{error}</p>}
                         <Button type="submit" className="w-full" disabled={loading} id="submit-login">
-                            {loading ? 'Signing in...' : 'Sign In'}
+                            {loading ? 'Giriş yapılıyor...' : 'Giriş Yap'}
                         </Button>
                     </form>
                 </Form>
             </CardContent>
             <CardFooter className="flex justify-center">
                 <p className="text-sm text-gray-500">
-                    Don't have an account?{' '}
+                    Hesabınız yok mu?{' '}
                     <Link href="/signup" className="text-blue-600 hover:underline">
-                        Sign up
+                        Kaydol
                     </Link>
                 </p>
             </CardFooter>

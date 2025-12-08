@@ -67,6 +67,16 @@ export function AnimalTable({ animals, onDelete, onEdit, onSell }: AnimalTablePr
         }
     };
 
+    const translateSpecies = (species: string) => {
+        const translations: Record<string, string> = {
+            'Cow': 'İnek',
+            'Sheep': 'Koyun',
+            'Goat': 'Keçi',
+            'Chicken': 'Tavuk',
+        };
+        return translations[species] || species;
+    };
+
     return (
         <div className="rounded-md border">
             <Table>
@@ -74,35 +84,35 @@ export function AnimalTable({ animals, onDelete, onEdit, onSell }: AnimalTablePr
                     <TableRow>
                         <TableHead onClick={() => handleSort('tag_number')} className="cursor-pointer hover:bg-muted/50 transition-colors">
                             <div className="flex items-center gap-2">
-                                Tag Number
+                                Küpe No
                                 <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
                             </div>
                         </TableHead>
                         <TableHead onClick={() => handleSort('name')} className="cursor-pointer hover:bg-muted/50 transition-colors">
                             <div className="flex items-center gap-2">
-                                Name
+                                İsim
                                 <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
                             </div>
                         </TableHead>
                         <TableHead onClick={() => handleSort('species')} className="cursor-pointer hover:bg-muted/50 transition-colors">
                             <div className="flex items-center gap-2">
-                                Type
+                                Tür
                                 <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
                             </div>
                         </TableHead>
                         <TableHead onClick={() => handleSort('breed')} className="cursor-pointer hover:bg-muted/50 transition-colors">
                             <div className="flex items-center gap-2">
-                                Breed
+                                Irk
                                 <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
                             </div>
                         </TableHead>
                         <TableHead onClick={() => handleSort('status')} className="cursor-pointer hover:bg-muted/50 transition-colors">
                             <div className="flex items-center gap-2">
-                                Status
+                                Durum
                                 <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
                             </div>
                         </TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead className="text-right">İşlemler</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -110,7 +120,7 @@ export function AnimalTable({ animals, onDelete, onEdit, onSell }: AnimalTablePr
                         <TableRow key={animal.id}>
                             <TableCell className="font-medium">{animal.tag_number}</TableCell>
                             <TableCell>{animal.name || '-'}</TableCell>
-                            <TableCell>{animal.species}</TableCell>
+                            <TableCell>{translateSpecies(animal.species)}</TableCell>
                             <TableCell>{animal.breed || '-'}</TableCell>
                             <TableCell>
                                 <Badge className={getStatusColor(animal.status || 'active')}>
@@ -129,7 +139,7 @@ export function AnimalTable({ animals, onDelete, onEdit, onSell }: AnimalTablePr
                                         size="icon"
                                         onClick={() => onEdit(animal)}
                                         disabled={animal.status === 'sold'}
-                                        title={animal.status === 'sold' ? 'Sold animals cannot be edited' : 'Edit'}
+                                        title={animal.status === 'sold' ? 'Satılmış hayvanlar düzenlenemez' : 'Düzenle'}
                                     >
                                         <Edit className="h-4 w-4" />
                                     </Button>
@@ -139,7 +149,7 @@ export function AnimalTable({ animals, onDelete, onEdit, onSell }: AnimalTablePr
                                             size="icon"
                                             className="text-green-600 hover:text-green-700"
                                             onClick={() => onSell(animal)}
-                                            title="Sell Animal"
+                                            title="Hayvan Sat"
                                         >
                                             <BadgeTurkishLira className="h-4 w-4" />
                                         </Button>

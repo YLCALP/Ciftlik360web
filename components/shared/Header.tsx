@@ -11,7 +11,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { createClient } from '@/lib/supabase/client';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 
@@ -37,11 +36,24 @@ const getPageTitle = (pathname: string): string => {
 export function Header() {
     const router = useRouter();
     const pathname = usePathname();
-    const supabase = createClient();
 
     const handleLogout = async () => {
-        await supabase.auth.signOut();
-        router.push('/login');
+        try {
+            const response = await fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                router.push('/login');
+            } else {
+                console.error('Logout failed');
+            }
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
     };
 
     return (
@@ -62,17 +74,17 @@ export function Header() {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                        <DropdownMenuLabel>Hesabım</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
                             <Link href="/settings" className="cursor-pointer w-full flex items-center">
                                 <Settings className="mr-2 h-4 w-4" />
-                                <span>Settings</span>
+                                <span>Ayarlar</span>
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 focus:text-red-600">
                             <LogOut className="mr-2 h-4 w-4" />
-                            <span>Logout</span>
+                            <span>Çıkış Yap</span>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

@@ -33,15 +33,15 @@ import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 
 const formSchema = z.object({
-    tag_number: z.string().min(1, 'Tag number is required'),
+    tag_number: z.string().min(1, 'Küpe numarası gereklidir'),
     name: z.string().optional(),
-    species: z.string().min(1, 'Species is required'),
+    species: z.string().min(1, 'Tür gereklidir'),
     breed: z.string().optional(),
-    gender: z.string().min(1, 'Gender is required'),
+    gender: z.string().min(1, 'Cinsiyet gereklidir'),
     birth_date: z.string().optional(),
     weight: z.string().optional(),
     purchase_price: z.string().default('0'),
-    purchase_date: z.string().min(1, 'Purchase date is required'),
+    purchase_date: z.string().min(1, 'Alış tarihi gereklidir'),
     status: z.string().default('Active'),
     notes: z.string().optional(),
 });
@@ -90,7 +90,7 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                         name="tag_number"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Tag Number</FormLabel>
+                                <FormLabel>Küpe No</FormLabel>
                                 <FormControl>
                                     <Input placeholder="TR-001" {...field} />
                                 </FormControl>
@@ -103,7 +103,7 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                         name="name"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Name</FormLabel>
+                                <FormLabel>İsim</FormLabel>
                                 <FormControl>
                                     <Input placeholder="Bella" {...field} />
                                 </FormControl>
@@ -116,18 +116,18 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                         name="species"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Species</FormLabel>
+                                <FormLabel>Tür</FormLabel>
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                     <FormControl>
                                         <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select species" />
+                                            <SelectValue placeholder="Tür seçin" />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem value="Cow">Cow</SelectItem>
-                                        <SelectItem value="Sheep">Sheep</SelectItem>
-                                        <SelectItem value="Goat">Goat</SelectItem>
-                                        <SelectItem value="Chicken">Chicken</SelectItem>
+                                        <SelectItem value="Cow">İnek</SelectItem>
+                                        <SelectItem value="Sheep">Koyun</SelectItem>
+                                        <SelectItem value="Goat">Keçi</SelectItem>
+                                        <SelectItem value="Chicken">Tavuk</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -139,7 +139,7 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                         name="breed"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Breed</FormLabel>
+                                <FormLabel>Irk</FormLabel>
                                 <FormControl>
                                     <Input placeholder="Holstein" {...field} />
                                 </FormControl>
@@ -152,16 +152,16 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                         name="gender"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Gender</FormLabel>
+                                <FormLabel>Cinsiyet</FormLabel>
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                     <FormControl>
                                         <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select gender" />
+                                            <SelectValue placeholder="Cinsiyet seçin" />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem value="Female">Female</SelectItem>
-                                        <SelectItem value="Male">Male</SelectItem>
+                                        <SelectItem value="Female">Dişi</SelectItem>
+                                        <SelectItem value="Male">Erkek</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -173,18 +173,18 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                         name="status"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Status</FormLabel>
+                                <FormLabel>Durum</FormLabel>
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                     <FormControl>
                                         <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select status" />
+                                            <SelectValue placeholder="Durum seçin" />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem value="Active">Active</SelectItem>
-                                        <SelectItem value="Sick">Sick</SelectItem>
-                                        <SelectItem value="Sold">Sold</SelectItem>
-                                        <SelectItem value="Deceased">Deceased</SelectItem>
+                                        <SelectItem value="Active">Aktif</SelectItem>
+                                        <SelectItem value="Sick">Hasta</SelectItem>
+                                        <SelectItem value="Sold">Satıldı</SelectItem>
+                                        <SelectItem value="Deceased">Öldü</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -196,7 +196,7 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                         name="birth_date"
                         render={({ field }) => (
                             <FormItem className="flex flex-col">
-                                <FormLabel>Birth Date</FormLabel>
+                                <FormLabel>Doğum Tarihi</FormLabel>
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <FormControl>
@@ -210,7 +210,7 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                                                 {field.value ? (
                                                     format(new Date(field.value), "PPP")
                                                 ) : (
-                                                    <span>Pick a date</span>
+                                                    <span>Tarih seçin</span>
                                                 )}
                                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                             </Button>
@@ -237,7 +237,7 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                         name="purchase_date"
                         render={({ field }) => (
                             <FormItem className="flex flex-col">
-                                <FormLabel>Purchase Date</FormLabel>
+                                <FormLabel>Alış Tarihi</FormLabel>
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <FormControl>
@@ -251,7 +251,7 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                                                 {field.value ? (
                                                     format(new Date(field.value), "PPP")
                                                 ) : (
-                                                    <span>Pick a date</span>
+                                                    <span>Tarih seçin</span>
                                                 )}
                                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                             </Button>
@@ -278,7 +278,7 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                         name="weight"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Weight (kg)</FormLabel>
+                                <FormLabel>Ağırlık (kg)</FormLabel>
                                 <FormControl>
                                     <Input type="number" step="0.1" {...field} />
                                 </FormControl>
@@ -291,7 +291,7 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                         name="purchase_price"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Purchase Price</FormLabel>
+                                <FormLabel>Alış Fiyatı</FormLabel>
                                 <FormControl>
                                     <Input
                                         placeholder="0"
@@ -315,9 +315,9 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                     name="notes"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Notes</FormLabel>
+                            <FormLabel>Notlar</FormLabel>
                             <FormControl>
-                                <Textarea placeholder="Any additional notes..." {...field} />
+                                <Textarea placeholder="Ek notlar..." {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -326,11 +326,11 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                 <div className="flex justify-end gap-2">
                     {onCancel && (
                         <Button type="button" variant="outline" onClick={onCancel}>
-                            Cancel
+                            İptal
                         </Button>
                     )}
                     <Button type="submit" disabled={loading}>
-                        {loading ? 'Saving...' : 'Save Animal'}
+                        {loading ? 'Kaydediliyor...' : 'Hayvanı Kaydet'}
                     </Button>
                 </div>
             </form>
