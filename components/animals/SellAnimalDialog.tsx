@@ -25,6 +25,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { tr } from 'date-fns/locale';
 import { CalendarIcon } from 'lucide-react';
 import { Animal } from '@/lib/types';
 
@@ -135,7 +136,7 @@ export function SellAnimalDialog({ animal, isOpen, onClose, onConfirm }: SellAni
                                                     )}
                                                 >
                                                     {field.value ? (
-                                                        format(field.value, "PPP")
+                                                        format(field.value, "PPP", { locale: tr })
                                                     ) : (
                                                         <span>Tarih seçin</span>
                                                     )}
@@ -143,7 +144,7 @@ export function SellAnimalDialog({ animal, isOpen, onClose, onConfirm }: SellAni
                                                 </Button>
                                             </FormControl>
                                         </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0" align="start">
+                                        <PopoverContent className="w-[340px] p-0" align="start">
                                             <Calendar
                                                 mode="single"
                                                 selected={field.value}

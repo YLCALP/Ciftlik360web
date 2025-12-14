@@ -33,7 +33,7 @@ export function TransactionList({ transactions }: TransactionListProps) {
 
     const translateDescription = (description: string) => {
         return description
-            .replace(/Purchased/g, 'Satın Alındı')
+            .replace(/Purchased/g, 'Satın Aldıın başını')
             .replace(/Sold/g, 'Satıldı')
             .replace(/Feed/g, 'Yem')
             .replace(/Cow/g, 'İnek')
@@ -134,8 +134,8 @@ export function TransactionList({ transactions }: TransactionListProps) {
                                         : 'text-red-600'
                                 )}
                             >
-                                {transaction.type === 'income' ? '+' : '-'}₺
-                                {transaction.amount.toLocaleString('tr-TR')}
+                                {transaction.type === 'income' ? '+' : '-'}
+                                {transaction.amount.toLocaleString('tr-TR')}₺
                             </TableCell>
                         </TableRow>
                     ))}

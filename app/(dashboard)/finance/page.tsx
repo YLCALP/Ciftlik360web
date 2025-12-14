@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { tr } from 'date-fns/locale';
 import { CalendarIcon } from 'lucide-react';
 import { FinanceSkeleton } from '@/components/finance/FinanceSkeleton';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -47,7 +48,7 @@ export default function FinancePage() {
         start: '',
         end: ''
     });
-    const [typeFilter, setTypeFilter] = useState<string>('all');
+    const [typeFilter, setTypeFilter] = useState<string>('Hepsi');
 
     const supabase = createClient();
 
@@ -75,7 +76,7 @@ export default function FinancePage() {
         if (dateFilter.start && t.date < dateFilter.start) return false;
         if (dateFilter.end && t.date > dateFilter.end) return false;
 
-        if (typeFilter !== 'all' && t.type !== typeFilter) return false;
+        if (typeFilter !== 'Hepsi' && t.type !== typeFilter) return false;
 
         return true;
     });
@@ -130,14 +131,14 @@ export default function FinancePage() {
                                 )}
                             >
                                 {dateFilter.start ? (
-                                    format(new Date(dateFilter.start), "PPP")
+                                    format(new Date(dateFilter.start), "PPP", { locale: tr })
                                 ) : (
                                     <span>Tarih seçin</span>
                                 )}
                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
+                        <PopoverContent className="w-[340px] p-0" align="start">
                             <Calendar
                                 mode="single"
                                 selected={dateFilter.start ? new Date(dateFilter.start) : undefined}
@@ -159,14 +160,14 @@ export default function FinancePage() {
                                 )}
                             >
                                 {dateFilter.end ? (
-                                    format(new Date(dateFilter.end), "PPP")
+                                    format(new Date(dateFilter.end), "PPP", { locale: tr })
                                 ) : (
                                     <span>Tarih seçin</span>
                                 )}
                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
+                        <PopoverContent className="w-[340px] p-0" align="start">
                             <Calendar
                                 mode="single"
                                 selected={dateFilter.end ? new Date(dateFilter.end) : undefined}
@@ -183,18 +184,18 @@ export default function FinancePage() {
                             <SelectValue placeholder="Türe göre filtrele" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">Tüm İşlemler</SelectItem>
+                            <SelectItem value="Hepsi">Tüm İşlemler</SelectItem>
                             <SelectItem value="income">Gelir</SelectItem>
                             <SelectItem value="expense">Gider</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
-                {(dateFilter.start || dateFilter.end || typeFilter !== 'all') && (
+                {(dateFilter.start || dateFilter.end || typeFilter !== 'Hepsi') && (
                     <Button
                         variant="ghost"
                         onClick={() => {
                             setDateFilter({ start: '', end: '' });
-                            setTypeFilter('all');
+                            setTypeFilter('Hepsi');
                         }}
                         className="mb-0.5"
                     >

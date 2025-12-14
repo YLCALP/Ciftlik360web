@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { tr } from 'date-fns/locale';
 import { CalendarIcon } from 'lucide-react';
 
 interface TransactionModalProps {
@@ -105,14 +106,14 @@ export function TransactionModal({
                                         )}
                                     >
                                         {formData.date ? (
-                                            format(new Date(formData.date), "PPP")
+                                            format(new Date(formData.date), "PPP", { locale: tr })
                                         ) : (
                                             <span>Tarih seçin</span>
                                         )}
                                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                     </Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
+                                <PopoverContent className="w-[340px] p-0" align="start">
                                     <Calendar
                                         mode="single"
                                         selected={formData.date ? new Date(formData.date) : undefined}
@@ -169,13 +170,13 @@ export function TransactionModal({
                                     <SelectValue placeholder="Kategori seçin" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="animal_sale">Hayvan Satışı</SelectItem>
-                                    <SelectItem value="animal_purchase">Hayvan Alımı</SelectItem>
-                                    <SelectItem value="feed">Yem</SelectItem>
-                                    <SelectItem value="medicine">İlaç</SelectItem>
-                                    <SelectItem value="equipment">Ekipman</SelectItem>
-                                    <SelectItem value="labor">İşçilik</SelectItem>
-                                    <SelectItem value="other">Diğer</SelectItem>
+                                    <SelectItem value="hayvan_satisi">Hayvan Satışı</SelectItem>
+                                    <SelectItem value="hayvan_alimi">Hayvan Alımı</SelectItem>
+                                    <SelectItem value="yem">Yem</SelectItem>
+                                    <SelectItem value="ilaclar">İlaçlar</SelectItem>
+                                    <SelectItem value="ekipman">Ekipman</SelectItem>
+                                    <SelectItem value="isciilik">İşçilik</SelectItem>
+                                    <SelectItem value="diger">Diğer</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>

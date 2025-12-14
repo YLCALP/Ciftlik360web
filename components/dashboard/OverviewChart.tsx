@@ -15,7 +15,7 @@ interface OverviewChartProps {
 
 export function OverviewChart({ data }: OverviewChartProps) {
     const formatCurrency = (value: number) => {
-        return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 }).format(value);
+        return `${value.toLocaleString('tr-TR')}₺`;
     };
 
     return (
@@ -50,7 +50,7 @@ export function OverviewChart({ data }: OverviewChartProps) {
                                 fontSize={12}
                                 tickLine={false}
                                 axisLine={false}
-                                tickFormatter={(value) => `₺${value}`}
+                                tickFormatter={(value) => `${value.toLocaleString('tr-TR')}₺`}
                             />
                             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" vertical={false} />
                             <Tooltip

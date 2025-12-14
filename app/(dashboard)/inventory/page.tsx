@@ -43,10 +43,10 @@ export default function InventoryPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
-    const [modalType, setModalType] = useState<'in' | 'out'>('in');
+    const [modalType, setModalType] = useState<'Stokta' | 'StokYok'>('Stokta');
     const [error, setError] = useState<string | null>(null);
     const [isCreating, setIsCreating] = useState(false);
-    const [statusFilter, setStatusFilter] = useState<string>('all');
+    const [statusFilter, setStatusFilter] = useState<string>('Hepsi');
 
     const supabase = createClient();
 
@@ -74,30 +74,30 @@ export default function InventoryPage() {
     const filteredItems = items.filter((item) => {
         const matchesSearch = item.feed_name.toLowerCase().includes(searchQuery.toLowerCase());
 
-        const matchesStatus = statusFilter === 'all' ||
-            (statusFilter === 'low' && item.quantity < 10) ||
-            (statusFilter === 'out' && item.quantity === 0) ||
-            (statusFilter === 'in' && item.quantity > 0);
+        const matchesStatus = statusFilter === 'Hepsi' ||
+            (statusFilter === 'DusukStok' && item.quantity < 10) ||
+            (statusFilter === 'StokYok' && item.quantity === 0) ||
+            (statusFilter === 'Stokta' && item.quantity > 0);
 
         return matchesSearch && matchesStatus;
     });
 
     const handleStockIn = (item: InventoryItem) => {
         setSelectedItem(item);
-        setModalType('in');
+        setModalType('Stokta');
         setIsModalOpen(true);
     };
 
     const handleStockOut = (item: InventoryItem) => {
         setSelectedItem(item);
-        setModalType('out');
+        setModalType('StokYok');
         setIsModalOpen(true);
     };
 
-    const handleConfirmAdjustment = async (quantity: number, type: 'in' | 'out') => {
+    const handleConfirmAdjustment = async (quantity: number, type: 'Stokta' | 'StokYok') => {
         if (!selectedItem) return;
 
-        const newQuantity = type === 'in'
+        const newQuantity = type === 'Stokta'
             ? selectedItem.quantity + quantity
             : Math.max(0, selectedItem.quantity - quantity);
 
@@ -118,7 +118,7 @@ export default function InventoryPage() {
                     : item
             ));
             toast.success(
-                type === 'in' ? 'Stok eklendi!' : 'Stok çıkarıldı!',
+                type === 'Stokta' ? 'Stok eklendi!' : 'Stok çıkarıldı!',
                 `${selectedItem.feed_name} için stok güncellendi.`
             );
         } catch (error) {
@@ -134,7 +134,7 @@ export default function InventoryPage() {
             const { data: { user } } = await supabase.auth.getUser();
 
             if (!user) {
-                console.error('User not authenticated');
+                console.error('Kullanıcı oturumu açılmadı');
                 return;
             }
 
@@ -200,10 +200,10 @@ export default function InventoryPage() {
                         <SelectValue placeholder="Duruma göre filtrele" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="all">Tüm Ürünler</SelectItem>
-                        <SelectItem value="in">Stokta</SelectItem>
-                        <SelectItem value="low">Düşük Stok (&lt; 10)</SelectItem>
-                        <SelectItem value="out">Stok Yok</SelectItem>
+                        <SelectItem value="Hepsi">Tüm Ürünler</SelectItem>
+                        <SelectItem value="Stokta">Stokta</SelectItem>
+                        <SelectItem value="DusukStok">Düşük Stok (&lt; 10)</SelectItem>
+                        <SelectItem value="StokYok">Stok Yok</SelectItem>
                     </SelectContent>
                 </Select>
                 <div className="flex gap-2 w-full sm:w-auto sm:ml-auto">

@@ -78,7 +78,7 @@ export function FinanceSummary({ transactions }: FinanceSummaryProps) {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold text-green-600">
-                            ₺{totalIncome.toLocaleString('tr-TR')}
+                            {totalIncome.toLocaleString('tr-TR')}₺
                         </div>
                     </CardContent>
                 </Card>
@@ -91,7 +91,7 @@ export function FinanceSummary({ transactions }: FinanceSummaryProps) {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold text-red-600">
-                            ₺{totalExpense.toLocaleString('tr-TR')}
+                            {totalExpense.toLocaleString('tr-TR')}₺
                         </div>
                     </CardContent>
                 </Card>
@@ -104,7 +104,7 @@ export function FinanceSummary({ transactions }: FinanceSummaryProps) {
                     </CardHeader>
                     <CardContent>
                         <div className={`text-2xl font-bold ${netBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            ₺{netBalance.toLocaleString('tr-TR')}
+                            {netBalance.toLocaleString('tr-TR')}₺
                         </div>
                     </CardContent>
                 </Card>
@@ -133,7 +133,7 @@ export function FinanceSummary({ transactions }: FinanceSummaryProps) {
                                         fontSize={12}
                                         tickLine={false}
                                         axisLine={false}
-                                        tickFormatter={(value) => `₺${value}`}
+                                        tickFormatter={(value) => `${value.toLocaleString('tr-TR')}₺`}
                                     />
                                     <Tooltip
                                         cursor={{ fill: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}
@@ -146,6 +146,7 @@ export function FinanceSummary({ transactions }: FinanceSummaryProps) {
                                         }}
                                         itemStyle={{ color: isDark ? '#fff' : '#000' }}
                                         labelStyle={{ color: '#9ca3af', marginBottom: '0.25rem' }}
+                                        formatter={(value: number) => `${value.toLocaleString('tr-TR')}₺`}
                                     />
                                     <Bar dataKey="income" fill="#10b981" radius={[6, 6, 0, 0]} name="Gelir" barSize={40} />
                                     <Bar dataKey="expense" fill="#ef4444" radius={[6, 6, 0, 0]} name="Gider" barSize={40} />

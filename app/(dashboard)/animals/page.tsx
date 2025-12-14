@@ -50,8 +50,8 @@ export default function AnimalsPage() {
     const [selectedAnimal, setSelectedAnimal] = useState<Animal | undefined>(undefined);
     const [animalToDelete, setAnimalToDelete] = useState<string | null>(null);
     const [animalToSell, setAnimalToSell] = useState<Animal | null>(null);
-    const [statusFilter, setStatusFilter] = useState<string>('all');
-    const [typeFilter, setTypeFilter] = useState<string>('all');
+    const [statusFilter, setStatusFilter] = useState<string>('Hepsi');
+    const [typeFilter, setTypeFilter] = useState<string>('Hepsi');
 
     const supabase = createClient();
 
@@ -83,8 +83,8 @@ export default function AnimalsPage() {
             animal.tag_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
             (animal.name?.toLowerCase() || '').includes(searchQuery.toLowerCase());
 
-        const matchesStatus = statusFilter === 'all' || animal.status?.toLowerCase() === statusFilter.toLowerCase();
-        const matchesType = typeFilter === 'all' || animal.species?.toLowerCase() === typeFilter.toLowerCase();
+        const matchesStatus = statusFilter === 'Hepsi' || animal.status?.toLowerCase() === statusFilter.toLowerCase();
+        const matchesType = typeFilter === 'Hepsi' || animal.species?.toLowerCase() === typeFilter.toLowerCase();
 
         return matchesSearch && matchesStatus && matchesType;
     });
@@ -92,7 +92,7 @@ export default function AnimalsPage() {
     const handleCreate = async (values: any) => {
         try {
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) throw new Error('No user found');
+            if (!user) throw new Error('Kullanıcı bulunamadı');
 
             const newAnimal = {
                 ...values,
@@ -224,7 +224,7 @@ export default function AnimalsPage() {
                 .update({
                     sold_price: data.sold_price,
                     sold_date: data.sold_date,
-                    status: 'sold'
+                    status: 'Satildi'
                 })
                 .eq('id', animalToSell.id);
 
@@ -243,7 +243,7 @@ export default function AnimalsPage() {
             // Update local state
             setAnimals(animals.map(a =>
                 a.id === animalToSell.id
-                    ? { ...a, sold_price: data.sold_price, sold_date: data.sold_date, status: 'sold' }
+                    ? { ...a, sold_price: data.sold_price, sold_date: data.sold_date, status: 'Satildi' }
                     : a
             ));
             setIsSellDialogOpen(false);
@@ -277,11 +277,11 @@ export default function AnimalsPage() {
                         <SelectValue placeholder="Duruma göre filtrele" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="all">Tüm Durumlar</SelectItem>
-                        <SelectItem value="active">Aktif</SelectItem>
-                        <SelectItem value="sold">Satıldı</SelectItem>
-                        <SelectItem value="sick">Hasta</SelectItem>
-                        <SelectItem value="pregnant">Gebe</SelectItem>
+                        <SelectItem value="Hepsi">Tüm Durumlar</SelectItem>
+                        <SelectItem value="Aktif">Aktif</SelectItem>
+                        <SelectItem value="Satildi">Satıldı</SelectItem>
+                        <SelectItem value="Hasta">Hasta</SelectItem>
+                        <SelectItem value="Gebe">Gebe</SelectItem>
                     </SelectContent>
                 </Select>
                 <Select value={typeFilter} onValueChange={setTypeFilter}>
@@ -289,11 +289,11 @@ export default function AnimalsPage() {
                         <SelectValue placeholder="Türe göre filtrele" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="all">Tüm Türler</SelectItem>
-                        <SelectItem value="Cow">İnek</SelectItem>
-                        <SelectItem value="Sheep">Koyun</SelectItem>
-                        <SelectItem value="Goat">Keçi</SelectItem>
-                        <SelectItem value="Chicken">Tavuk</SelectItem>
+                        <SelectItem value="Hepsi">Tüm Türler</SelectItem>
+                        <SelectItem value="Inek">İnek</SelectItem>
+                        <SelectItem value="Koyun">Koyun</SelectItem>
+                        <SelectItem value="Keci">Keçi</SelectItem>
+                        <SelectItem value="Tavuk">Tavuk</SelectItem>
                     </SelectContent>
                 </Select>
                 <div className="flex gap-2 w-full sm:w-auto sm:ml-auto">
@@ -315,7 +315,7 @@ export default function AnimalsPage() {
                                         'Doğum Tarihi': a.birth_date || '-',
                                         'Kilo': a.weight || '-',
                                         'Alış Fiyatı': a.purchase_price,
-                                        'Durum': a.status || 'Active'
+                                        'Durum': a.status || 'Aktif'
                                     })),
                                     'Hayvanlar'
                                 );

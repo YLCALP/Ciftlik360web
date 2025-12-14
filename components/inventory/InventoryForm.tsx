@@ -25,6 +25,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { tr } from 'date-fns/locale';
 import { CalendarIcon } from 'lucide-react';
 
 const formSchema = z.object({
@@ -88,9 +89,9 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                         name="feed_name"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Item Name</FormLabel>
+                                <FormLabel>Ürün Adı</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="e.g. Barley" {...field} />
+                                    <Input placeholder="Arpa" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -102,7 +103,7 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                         name="feed_type"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Type</FormLabel>
+                                <FormLabel>Tip</FormLabel>
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                     <FormControl>
                                         <SelectTrigger className="w-full">
@@ -110,11 +111,11 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem value="Feed">Feed</SelectItem>
-                                        <SelectItem value="Medicine">Medicine</SelectItem>
-                                        <SelectItem value="Supplement">Supplement</SelectItem>
-                                        <SelectItem value="Equipment">Equipment</SelectItem>
-                                        <SelectItem value="Other">Other</SelectItem>
+                                        <SelectItem value="Yem">Yem</SelectItem>
+                                        <SelectItem value="Ilac">İlaç</SelectItem>
+                                        <SelectItem value="Takviye">Takviye</SelectItem>
+                                        <SelectItem value="Ekipman">Ekipman</SelectItem>
+                                        <SelectItem value="Diger">Diğer</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -127,9 +128,9 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                         name="brand"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Brand</FormLabel>
+                                <FormLabel>Marka</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Brand name" {...field} />
+                                    <Input placeholder="Marka" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -142,7 +143,7 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                             name="quantity"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Quantity</FormLabel>
+                                    <FormLabel>Miktar</FormLabel>
                                     <FormControl>
                                         <Input type="number" {...field} />
                                     </FormControl>
@@ -155,19 +156,19 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                             name="unit"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Unit</FormLabel>
+                                    <FormLabel> Birim</FormLabel>
                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <FormControl>
                                             <SelectTrigger className="w-full">
-                                                <SelectValue placeholder="Unit" />
+                                                <SelectValue placeholder="Birim" />
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            <SelectItem value="kg">kg</SelectItem>
-                                            <SelectItem value="liter">liter</SelectItem>
-                                            <SelectItem value="bag">bag</SelectItem>
-                                            <SelectItem value="unit">unit</SelectItem>
-                                            <SelectItem value="bale">bale</SelectItem>
+                                            <SelectItem value="kg">Kg</SelectItem>
+                                            <SelectItem value="litre">Litre</SelectItem>
+                                            <SelectItem value="cuval">Çuval</SelectItem>
+                                            <SelectItem value="adet">Adet</SelectItem>
+                                            <SelectItem value="balya">Balya</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
@@ -215,7 +216,7 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                                                 )}
                                             >
                                                 {field.value ? (
-                                                    format(field.value, "PPP")
+                                                    format(field.value, "PPP", { locale: tr })
                                                 ) : (
                                                     <span>Pick a date</span>
                                                 )}
@@ -223,7 +224,7 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                                             </Button>
                                         </FormControl>
                                     </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0" align="start">
+                                    <PopoverContent className="w-[340px] p-0" align="start">
                                         <Calendar
                                             mode="single"
                                             selected={field.value}
@@ -257,7 +258,7 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                                                 )}
                                             >
                                                 {field.value ? (
-                                                    format(field.value, "PPP")
+                                                    format(field.value, "PPP", { locale: tr })
                                                 ) : (
                                                     <span>Pick a date</span>
                                                 )}
@@ -265,7 +266,7 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                                             </Button>
                                         </FormControl>
                                     </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0" align="start">
+                                    <PopoverContent className="w-[340px] p-0" align="start">
                                         <Calendar
                                             mode="single"
                                             selected={field.value}
@@ -284,9 +285,9 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                         name="supplier"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Supplier</FormLabel>
+                                <FormLabel>Tedarikçi</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Supplier name" {...field} />
+                                    <Input placeholder="Tedarikçi" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -298,9 +299,9 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                         name="storage_location"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Storage Location</FormLabel>
+                                <FormLabel>Depolama Yeri</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="e.g. Barn A" {...field} />
+                                    <Input placeholder="Depolama Yeri" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -313,9 +314,9 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                     name="notes"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Notes</FormLabel>
+                            <FormLabel>Notlar</FormLabel>
                             <FormControl>
-                                <Textarea placeholder="Any additional notes..." {...field} />
+                                <Textarea placeholder="Notlar..." {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -324,10 +325,10 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
 
                 <div className="flex justify-end gap-4">
                     <Button type="button" variant="outline" onClick={onCancel}>
-                        Cancel
+                        Vazgeç
                     </Button>
                     <Button type="submit" disabled={isLoading}>
-                        {isLoading ? 'Saving...' : 'Save Item'}
+                        {isLoading ? 'Kayıt Ediliyor...' : 'Kaydet'}
                     </Button>
                 </div>
             </form>

@@ -52,16 +52,18 @@ export function AnimalTable({ animals, onDelete, onEdit, onSell }: AnimalTablePr
     const getStatusColor = (status: string) => {
         const statusLower = status?.toLowerCase();
         switch (statusLower) {
-            case 'healthy':
+            case 'aktif':
                 return 'bg-green-500 hover:bg-green-600';
-            case 'sick':
+            case 'hasta':
                 return 'bg-red-500 hover:bg-red-600';
-            case 'pregnant':
+            case 'gebe':
                 return 'bg-blue-500 hover:bg-blue-600';
-            case 'sold':
+            case 'satildi':
+            case 'satıldı':
                 return 'bg-red-500 hover:bg-red-600';
-            case 'active':
-                return 'bg-green-500 hover:bg-green-600';
+            case 'oldu':
+            case 'öldü':
+                return 'bg-gray-500 hover:bg-gray-600';
             default:
                 return 'bg-green-500 hover:bg-green-600';
         }
@@ -123,8 +125,8 @@ export function AnimalTable({ animals, onDelete, onEdit, onSell }: AnimalTablePr
                             <TableCell>{translateSpecies(animal.species)}</TableCell>
                             <TableCell>{animal.breed || '-'}</TableCell>
                             <TableCell>
-                                <Badge className={getStatusColor(animal.status || 'active')}>
-                                    {animal.status || 'active'}
+                                <Badge className={getStatusColor(animal.status || 'Aktif')}>
+                                    {animal.status || 'Aktif'}
                                 </Badge>
                             </TableCell>
                             <TableCell className="text-right">
@@ -138,12 +140,12 @@ export function AnimalTable({ animals, onDelete, onEdit, onSell }: AnimalTablePr
                                         variant="ghost"
                                         size="icon"
                                         onClick={() => onEdit(animal)}
-                                        disabled={animal.status === 'sold'}
-                                        title={animal.status === 'sold' ? 'Satılmış hayvanlar düzenlenemez' : 'Düzenle'}
+                                        disabled={animal.status?.toLowerCase() === 'satildi'}
+                                        title={animal.status?.toLowerCase() === 'satildi' ? 'Satılmış hayvanlar düzenlenemez' : 'Düzenle'}
                                     >
                                         <Edit className="h-4 w-4" />
                                     </Button>
-                                    {animal.status !== 'sold' && (
+                                    {animal.status?.toLowerCase() !== 'satildi' && (
                                         <Button
                                             variant="ghost"
                                             size="icon"

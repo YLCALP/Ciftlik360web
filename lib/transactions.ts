@@ -14,7 +14,7 @@ export async function createAnimalPurchaseTransaction(
     const { error } = await supabase.from('transactions').insert({
         user_id: userId,
         type: 'expense',
-        category: 'animal_purchase',
+        category: 'hayvan_alimi',
         amount: purchasePrice,
         description: `Satın Alındı ${species} - ${tagNumber}`,
         date: purchaseDate,
@@ -23,7 +23,7 @@ export async function createAnimalPurchaseTransaction(
     });
 
     if (error) {
-        console.error('Error creating animal purchase transaction:', error);
+        console.error('Hayvan Alımı Yaparken Hata:', error);
         throw error;
     }
 }
@@ -41,15 +41,15 @@ export async function updateAnimalPurchaseTransaction(
         .from('transactions')
         .update({
             amount: purchasePrice,
-            description: `Purchased ${species} - ${tagNumber}`,
+            description: `Hayvan alımı ${species} - ${tagNumber}`,
             date: purchaseDate,
         })
         .eq('animal_id', animalId)
         .eq('type', 'expense')
-        .eq('category', 'animal_purchase');
+        .eq('category', 'hayvan_alimi');
 
     if (error) {
-        console.error('Error updating animal purchase transaction:', error);
+        console.error('Hayvan Alımı Güncellemekde Hata:', error);
         throw error;
     }
 }
@@ -67,16 +67,16 @@ export async function createAnimalSaleTransaction(
     const { error } = await supabase.from('transactions').insert({
         user_id: userId,
         type: 'income',
-        category: 'animal_sale',
+        category: 'hayvan_satisi',
         amount: soldPrice,
-        description: `Sold ${species} - ${tagNumber}`,
+        description: `Satıldı ${species} - ${tagNumber}`,
         date: soldDate,
         animal_id: animalId,
         is_automatic: true,
     });
 
     if (error) {
-        console.error('Error creating animal sale transaction:', error);
+        console.error('Hayvan Satışı Yaparken Hata:', error);
         throw error;
     }
 }
@@ -96,14 +96,14 @@ export async function createInventoryPurchaseTransaction(
         type: 'expense',
         category: feedType.toLowerCase(),
         amount: purchasePrice,
-        description: `Purchased ${feedName} (${feedType})`,
+        description: `${feedName} (${feedType} Alımı)`,
         date: purchaseDate,
         feed_id: feedId,
         is_automatic: true,
     });
 
     if (error) {
-        console.error('Error creating inventory purchase transaction:', error);
+        console.error('Envanter Alımı Yaparken Hata:', error);
         throw error;
     }
 }

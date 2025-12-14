@@ -13,6 +13,7 @@ import { TransactionModal } from '@/components/finance/TransactionModal';
 import { EmptyState } from '@/components/ui/empty-state';
 import { toast } from '@/lib/toast';
 import { format } from 'date-fns';
+import { tr } from 'date-fns/locale';
 
 import { AnimalDetailSkeleton } from '@/components/animals/AnimalDetailSkeleton';
 
@@ -141,12 +142,12 @@ export default function AnimalDetailPage() {
                             <div>
                                 <p className="text-muted-foreground">Doğum Tarihi</p>
                                 <p className="font-medium">
-                                    {animal.birth_date ? format(new Date(animal.birth_date), 'dd.MM.yyyy') : '-'}
+                                    {animal.birth_date ? format(new Date(animal.birth_date), 'dd.MM.yyyy', { locale: tr }) : '-'}
                                 </p>
                             </div>
                             <div>
                                 <p className="text-muted-foreground">Alış Fiyatı</p>
-                                <p className="font-medium">{animal.purchase_price.toLocaleString('tr-TR')} ₺</p>
+                                <p className="font-medium">{animal.purchase_price.toLocaleString('tr-TR')}₺</p>
                             </div>
                         </div>
                     </CardContent>

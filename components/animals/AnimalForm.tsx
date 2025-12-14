@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { tr } from 'date-fns/locale';
 import { CalendarIcon } from 'lucide-react';
 
 const formSchema = z.object({
@@ -40,9 +41,9 @@ const formSchema = z.object({
     gender: z.string().min(1, 'Cinsiyet gereklidir'),
     birth_date: z.string().optional(),
     weight: z.string().optional(),
-    purchase_price: z.string().default('0'),
+    purchase_price: z.string().default(''),
     purchase_date: z.string().min(1, 'Alış tarihi gereklidir'),
-    status: z.string().default('Active'),
+    status: z.string().default('Aktif'),
     notes: z.string().optional(),
 });
 
@@ -63,12 +64,12 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
             name: initialData?.name || '',
             species: initialData?.species || '',
             breed: initialData?.breed || '',
-            gender: initialData?.gender || 'Female',
+            gender: initialData?.gender || 'Disi',
             birth_date: initialData?.birth_date || '',
             weight: initialData?.weight?.toString() || '',
-            purchase_price: initialData?.purchase_price?.toString() || '0',
+            purchase_price: initialData?.purchase_price?.toString() || '',
             purchase_date: initialData?.purchase_date || format(new Date(), 'yyyy-MM-dd'),
-            status: initialData?.status || 'Active',
+            status: initialData?.status || 'Aktif',
             notes: initialData?.notes || '',
         },
     });
@@ -124,10 +125,12 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem value="Cow">İnek</SelectItem>
-                                        <SelectItem value="Sheep">Koyun</SelectItem>
-                                        <SelectItem value="Goat">Keçi</SelectItem>
-                                        <SelectItem value="Chicken">Tavuk</SelectItem>
+                                        <SelectItem value="Inek">İnek</SelectItem>
+                                        <SelectItem value="Dana">Dana</SelectItem>
+                                        <SelectItem value="Duve">Düve</SelectItem>
+                                        <SelectItem value="Koyun">Koyun</SelectItem>
+                                        <SelectItem value="Keci">Keçi</SelectItem>
+                                        <SelectItem value="Tavuk">Tavuk</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -160,8 +163,8 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem value="Female">Dişi</SelectItem>
-                                        <SelectItem value="Male">Erkek</SelectItem>
+                                        <SelectItem value="Disi">Dişi</SelectItem>
+                                        <SelectItem value="Erkek">Erkek</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -181,10 +184,10 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem value="Active">Aktif</SelectItem>
-                                        <SelectItem value="Sick">Hasta</SelectItem>
-                                        <SelectItem value="Sold">Satıldı</SelectItem>
-                                        <SelectItem value="Deceased">Öldü</SelectItem>
+                                        <SelectItem value="Aktif">Aktif</SelectItem>
+                                        <SelectItem value="Hasta">Hasta</SelectItem>
+                                        <SelectItem value="Satildi">Satıldı</SelectItem>
+                                        <SelectItem value="Oldu">Öldü</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -208,7 +211,7 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                                                 )}
                                             >
                                                 {field.value ? (
-                                                    format(new Date(field.value), "PPP")
+                                                    format(new Date(field.value), "PPP", { locale: tr })
                                                 ) : (
                                                     <span>Tarih seçin</span>
                                                 )}
@@ -216,7 +219,7 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                                             </Button>
                                         </FormControl>
                                     </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0" align="start">
+                                    <PopoverContent className="w-[340px] p-0" align="start">
                                         <Calendar
                                             mode="single"
                                             selected={field.value ? new Date(field.value) : undefined}
@@ -249,7 +252,7 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                                                 )}
                                             >
                                                 {field.value ? (
-                                                    format(new Date(field.value), "PPP")
+                                                    format(new Date(field.value), "PPP", { locale: tr })
                                                 ) : (
                                                     <span>Tarih seçin</span>
                                                 )}
@@ -257,7 +260,7 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                                             </Button>
                                         </FormControl>
                                     </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0" align="start">
+                                    <PopoverContent className="w-[340px] p-0" align="start">
                                         <Calendar
                                             mode="single"
                                             selected={field.value ? new Date(field.value) : undefined}

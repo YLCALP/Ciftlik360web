@@ -16,9 +16,9 @@ import { Label } from '@/components/ui/label';
 interface StockAdjustmentModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: (quantity: number, type: 'in' | 'out') => void;
+    onConfirm: (quantity: number, type: 'Stokta' | 'StokYok') => void;
     item: InventoryItem | null;
-    type: 'in' | 'out';
+    type: 'Stokta' | 'StokYok';
 }
 
 export function StockAdjustmentModal({
@@ -40,7 +40,7 @@ export function StockAdjustmentModal({
             return;
         }
 
-        if (type === 'out' && item && numQuantity > item.quantity) {
+        if (type === 'StokYok' && item && numQuantity > item.quantity) {
             setError(`Cannot remove more than available stock (${item.quantity} ${item.unit})`);
             return;
         }
@@ -64,7 +64,7 @@ export function StockAdjustmentModal({
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>
-                        {type === 'in' ? 'Stock In' : 'Stock Out'} - {item?.feed_name}
+                        {type === 'Stokta' ? 'Stok Ekle' : 'Stok Çıkar'} - {item?.feed_name}
                     </DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -86,7 +86,7 @@ export function StockAdjustmentModal({
                         {error && (
                             <p className="text-sm text-destructive">{error}</p>
                         )}
-                        {type === 'out' && item && (
+                        {type === 'StokYok' && item && (
                             <p className="text-xs text-muted-foreground">
                                 Available: {item.quantity} {item.unit}
                             </p>
