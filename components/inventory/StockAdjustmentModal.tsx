@@ -36,12 +36,12 @@ export function StockAdjustmentModal({
         const numQuantity = parseFloat(quantity);
 
         if (isNaN(numQuantity) || numQuantity <= 0) {
-            setError('Please enter a valid quantity');
+            setError('Geçerli bir adet giriniz');
             return;
         }
 
         if (type === 'StokYok' && item && numQuantity > item.quantity) {
-            setError(`Cannot remove more than available stock (${item.quantity} ${item.unit})`);
+            setError(`Mevcut stokdan fazla stok çıkamazsınız (${item.quantity} ${item.unit})`);
             return;
         }
 
@@ -69,7 +69,7 @@ export function StockAdjustmentModal({
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
-                        <Label htmlFor="quantity">Quantity ({item?.unit})</Label>
+                        <Label htmlFor="quantity">Adet ({item?.unit})</Label>
                         <Input
                             id="quantity"
                             type="number"
@@ -80,7 +80,7 @@ export function StockAdjustmentModal({
                                 setQuantity(e.target.value);
                                 setError(null);
                             }}
-                            placeholder="Enter quantity"
+                            placeholder="Adet Giriniz"
                             required
                         />
                         {error && (
@@ -88,15 +88,15 @@ export function StockAdjustmentModal({
                         )}
                         {type === 'StokYok' && item && (
                             <p className="text-xs text-muted-foreground">
-                                Available: {item.quantity} {item.unit}
+                                Mevcut Stok: {item.quantity} {item.unit}
                             </p>
                         )}
                     </div>
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
-                            Cancel
+                            İptal
                         </Button>
-                        <Button type="submit">Confirm</Button>
+                        <Button type="submit">Onayla</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

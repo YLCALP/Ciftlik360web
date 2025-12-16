@@ -8,8 +8,8 @@ import { tr } from 'date-fns/locale';
 interface OverviewChartProps {
     data: {
         date: string;
-        income: number;
-        expense: number;
+        gelir: number;
+        gider: number;
     }[];
 }
 
@@ -87,7 +87,7 @@ export function OverviewChart({ data }: OverviewChartProps) {
                             />
                             <Area
                                 type="monotone"
-                                dataKey="income"
+                                dataKey="gelir"
                                 stroke="var(--color-primary)"
                                 fillOpacity={1}
                                 fill="url(#colorIncome)"
@@ -95,7 +95,7 @@ export function OverviewChart({ data }: OverviewChartProps) {
                             />
                             <Area
                                 type="monotone"
-                                dataKey="expense"
+                                dataKey="gider"
                                 stroke="var(--color-destructive)"
                                 fillOpacity={1}
                                 fill="url(#colorExpense)"

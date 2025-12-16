@@ -31,17 +31,6 @@ export function TransactionList({ transactions }: TransactionListProps) {
         }));
     };
 
-    const translateDescription = (description: string) => {
-        return description
-            .replace(/Purchased/g, 'Satın Aldıın başını')
-            .replace(/Sold/g, 'Satıldı')
-            .replace(/Feed/g, 'Yem')
-            .replace(/Cow/g, 'İnek')
-            .replace(/Sheep/g, 'Koyun')
-            .replace(/Goat/g, 'Keçi')
-            .replace(/Chicken/g, 'Tavuk');
-    };
-
     const translateCategory = (category: string) => {
         const translations: Record<string, string> = {
             'animal_sale': 'Hayvan Satışı',
@@ -106,7 +95,7 @@ export function TransactionList({ transactions }: TransactionListProps) {
                         <TableRow key={transaction.id}>
                             <TableCell>{new Date(transaction.date).toLocaleDateString('tr-TR')}</TableCell>
                             <TableCell>
-                                {translateDescription(transaction.description)}
+                                {transaction.description}
                                 {transaction.is_automatic && (
                                     <Badge variant="outline" className="ml-2 text-xs">Otomatik</Badge>
                                 )}
@@ -115,26 +104,26 @@ export function TransactionList({ transactions }: TransactionListProps) {
                             <TableCell>
                                 <Badge
                                     variant={
-                                        transaction.type === 'income' ? 'default' : 'destructive'
+                                        transaction.type === 'Gelir' ? 'default' : 'destructive'
                                     }
                                     className={cn(
-                                        transaction.type === 'income'
+                                        transaction.type === 'Gelir'
                                             ? 'bg-green-500 hover:bg-green-600'
                                             : 'bg-red-500 hover:bg-red-600'
                                     )}
                                 >
-                                    {transaction.type === 'income' ? 'Gelir' : 'Gider'}
+                                    {transaction.type === 'Gelir' ? 'Gelir' : 'Gider'}
                                 </Badge>
                             </TableCell>
                             <TableCell
                                 className={cn(
                                     'text-right font-medium',
-                                    transaction.type === 'income'
+                                    transaction.type === 'Gelir'
                                         ? 'text-green-600'
                                         : 'text-red-600'
                                 )}
                             >
-                                {transaction.type === 'income' ? '+' : '-'}
+                                {transaction.type === 'Gelir' ? '+' : '-'}
                                 {transaction.amount.toLocaleString('tr-TR')}₺
                             </TableCell>
                         </TableRow>

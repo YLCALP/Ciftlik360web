@@ -13,7 +13,7 @@ export async function createAnimalPurchaseTransaction(
 
     const { error } = await supabase.from('transactions').insert({
         user_id: userId,
-        type: 'expense',
+        type: 'Gider',
         category: 'hayvan_alimi',
         amount: purchasePrice,
         description: `Satın Alındı ${species} - ${tagNumber}`,
@@ -45,7 +45,7 @@ export async function updateAnimalPurchaseTransaction(
             date: purchaseDate,
         })
         .eq('animal_id', animalId)
-        .eq('type', 'expense')
+        .eq('type', 'Gider')
         .eq('category', 'hayvan_alimi');
 
     if (error) {
@@ -66,7 +66,7 @@ export async function createAnimalSaleTransaction(
 
     const { error } = await supabase.from('transactions').insert({
         user_id: userId,
-        type: 'income',
+        type: 'Gelir',
         category: 'hayvan_satisi',
         amount: soldPrice,
         description: `Satıldı ${species} - ${tagNumber}`,
@@ -93,7 +93,7 @@ export async function createInventoryPurchaseTransaction(
 
     const { error } = await supabase.from('transactions').insert({
         user_id: userId,
-        type: 'expense',
+        type: 'Gider',
         category: feedType.toLowerCase(),
         amount: purchasePrice,
         description: `${feedName} (${feedType} Alımı)`,

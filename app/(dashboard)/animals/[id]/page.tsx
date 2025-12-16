@@ -137,7 +137,7 @@ export default function AnimalDetailPage() {
                             </div>
                             <div>
                                 <p className="text-muted-foreground">Cinsiyet</p>
-                                <p className="font-medium">{animal.gender === 'Male' ? 'Erkek' : 'Dişi'}</p>
+                                <p className="font-medium">{animal.gender === 'Erkek' ? 'Erkek' : 'Dişi'}</p>
                             </div>
                             <div>
                                 <p className="text-muted-foreground">Doğum Tarihi</p>
@@ -180,7 +180,7 @@ export default function AnimalDetailPage() {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onConfirm={handleAddExpense}
-                forcedType="expense"
+                forcedType="Gider"
             />
         </div>
     );

@@ -20,6 +20,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Combobox } from '@/components/ui/combobox';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -27,6 +28,14 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import { CalendarIcon } from 'lucide-react';
+
+const typeOptions = [
+    { value: "Yem", label: "Yem" },
+    { value: "Ilac", label: "İlaç" },
+    { value: "Takviye", label: "Takviye" },
+    { value: "Ekipman", label: "Ekipman" },
+    { value: "Diger", label: "Diğer" },
+];
 
 const formSchema = z.object({
     feed_name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -62,9 +71,9 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
             feed_name: '',
             feed_type: '',
             brand: '',
-            quantity: '0',
+            quantity: '',
             unit: 'kg',
-            purchase_price: '0',
+            purchase_price: '',
             purchase_date: new Date(),
             supplier: '',
             storage_location: '',
@@ -104,20 +113,15 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Tip</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select type" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="Yem">Yem</SelectItem>
-                                        <SelectItem value="Ilac">İlaç</SelectItem>
-                                        <SelectItem value="Takviye">Takviye</SelectItem>
-                                        <SelectItem value="Ekipman">Ekipman</SelectItem>
-                                        <SelectItem value="Diger">Diğer</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                <FormControl>
+                                    <Combobox
+                                        options={typeOptions}
+                                        value={field.value}
+                                        onSelect={field.onChange}
+                                        placeholder="Tip seçin"
+                                        searchPlaceholder="Tip ara..."
+                                    />
+                                </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -145,7 +149,7 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                                 <FormItem>
                                     <FormLabel>Miktar</FormLabel>
                                     <FormControl>
-                                        <Input type="number" {...field} />
+                                        <Input placeholder="Miktar" type="number" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -182,9 +186,10 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                         name="purchase_price"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Purchase Price</FormLabel>
+                                <FormLabel>Alış Fiyatı</FormLabel>
                                 <FormControl>
                                     <Input
+                                        placeholder="Alış Fiyatı"
                                         {...field}
                                         onChange={(e) => {
                                             const rawValue = e.target.value.replace(/\./g, '');
@@ -204,7 +209,7 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                         name="purchase_date"
                         render={({ field }) => (
                             <FormItem className="flex flex-col">
-                                <FormLabel>Purchase Date</FormLabel>
+                                <FormLabel>Alış Tarihi</FormLabel>
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <FormControl>
@@ -218,7 +223,7 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                                                 {field.value ? (
                                                     format(field.value, "PPP", { locale: tr })
                                                 ) : (
-                                                    <span>Pick a date</span>
+                                                    <span>Tarih seçin</span>
                                                 )}
                                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                             </Button>
@@ -232,7 +237,6 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                                             disabled={(date) =>
                                                 date > new Date() || date < new Date("1900-01-01")
                                             }
-                                            initialFocus
                                         />
                                     </PopoverContent>
                                 </Popover>
@@ -246,7 +250,7 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                         name="expiry_date"
                         render={({ field }) => (
                             <FormItem className="flex flex-col">
-                                <FormLabel>Expiry Date (Optional)</FormLabel>
+                                <FormLabel>Son Kullanma Tarihi (Opsiyonel)</FormLabel>
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <FormControl>
@@ -260,7 +264,7 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                                                 {field.value ? (
                                                     format(field.value, "PPP", { locale: tr })
                                                 ) : (
-                                                    <span>Pick a date</span>
+                                                    <span>Tarih seçin</span>
                                                 )}
                                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                             </Button>
@@ -327,8 +331,8 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                     <Button type="button" variant="outline" onClick={onCancel}>
                         Vazgeç
                     </Button>
-                    <Button type="submit" disabled={isLoading}>
-                        {isLoading ? 'Kayıt Ediliyor...' : 'Kaydet'}
+                    <Button type="submit" disabled={isLoading} loading={isLoading}>
+                        Kaydet
                     </Button>
                 </div>
             </form>

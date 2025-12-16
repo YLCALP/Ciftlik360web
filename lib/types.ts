@@ -1,5 +1,5 @@
-export type AnimalStatus = 'Healthy' | 'Sick' | 'Pregnant' | 'Sold' | 'Deceased';
-export type AnimalType = 'Cow' | 'Sheep' | 'Goat' | 'Chicken';
+export type AnimalStatus = 'Aktif' | 'Hasta' | 'Gebe' | 'Satıldı' | 'Öldü';
+export type AnimalType = 'Inek' | 'Koyun' | 'Keci' | 'Tavuk';
 
 export interface Animal {
   id: string;
@@ -21,8 +21,8 @@ export interface Animal {
   created_at: string;
 }
 
-export type StockType = 'Feed' | 'Medicine' | 'Equipment';
-export type UnitType = 'kg' | 'liters' | 'units' | 'bags';
+export type StockType = 'Yem' | 'Ilac' | 'Ekipman';
+export type UnitType = 'Kg' | 'Litre' | 'Adet' | 'Cuval';
 
 export interface InventoryItem {
   id: string;
@@ -43,7 +43,7 @@ export interface InventoryItem {
   updated_at: string;
 }
 
-export type TransactionType = 'income' | 'expense';
+export type TransactionType = 'Gelir' | 'Gider';
 
 export interface Transaction {
   id: string;

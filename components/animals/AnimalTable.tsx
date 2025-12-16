@@ -71,10 +71,10 @@ export function AnimalTable({ animals, onDelete, onEdit, onSell }: AnimalTablePr
 
     const translateSpecies = (species: string) => {
         const translations: Record<string, string> = {
-            'Cow': 'İnek',
-            'Sheep': 'Koyun',
-            'Goat': 'Keçi',
-            'Chicken': 'Tavuk',
+            'Inek': 'İnek',
+            'Koyun': 'Koyun',
+            'Keci': 'Keçi',
+            'Tavuk': 'Tavuk',
         };
         return translations[species] || species;
     };
@@ -84,6 +84,7 @@ export function AnimalTable({ animals, onDelete, onEdit, onSell }: AnimalTablePr
             <Table>
                 <TableHeader>
                     <TableRow>
+                        <TableHead className="w-[50px]">Sıra</TableHead>
                         <TableHead onClick={() => handleSort('tag_number')} className="cursor-pointer hover:bg-muted/50 transition-colors">
                             <div className="flex items-center gap-2">
                                 Küpe No
@@ -108,6 +109,12 @@ export function AnimalTable({ animals, onDelete, onEdit, onSell }: AnimalTablePr
                                 <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
                             </div>
                         </TableHead>
+                        <TableHead onClick={() => handleSort('purchase_date')} className="cursor-pointer hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center gap-2">
+                                Alış Tarihi
+                                <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
+                            </div>
+                        </TableHead>
                         <TableHead onClick={() => handleSort('status')} className="cursor-pointer hover:bg-muted/50 transition-colors">
                             <div className="flex items-center gap-2">
                                 Durum
@@ -118,12 +125,16 @@ export function AnimalTable({ animals, onDelete, onEdit, onSell }: AnimalTablePr
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {sortedAnimals.map((animal) => (
+                    {sortedAnimals.map((animal, index) => (
                         <TableRow key={animal.id}>
+                            <TableCell>{index + 1}</TableCell>
                             <TableCell className="font-medium">{animal.tag_number}</TableCell>
                             <TableCell>{animal.name || '-'}</TableCell>
                             <TableCell>{translateSpecies(animal.species)}</TableCell>
                             <TableCell>{animal.breed || '-'}</TableCell>
+                            <TableCell>
+                                {new Date(animal.purchase_date).toLocaleDateString('tr-TR')}
+                            </TableCell>
                             <TableCell>
                                 <Badge className={getStatusColor(animal.status || 'Aktif')}>
                                     {animal.status || 'Aktif'}

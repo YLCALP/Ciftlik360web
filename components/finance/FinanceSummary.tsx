@@ -33,11 +33,11 @@ export function FinanceSummary({ transactions }: FinanceSummaryProps) {
     }, []);
 
     const totalIncome = transactions
-        .filter((t) => t.type === 'income')
+        .filter((t) => t.type === 'Gelir')
         .reduce((acc, t) => acc + t.amount, 0);
 
     const totalExpense = transactions
-        .filter((t) => t.type === 'expense')
+        .filter((t) => t.type === 'Gider')
         .reduce((acc, t) => acc + t.amount, 0);
 
     const netBalance = totalIncome - totalExpense;
@@ -49,21 +49,21 @@ export function FinanceSummary({ transactions }: FinanceSummaryProps) {
 
         const existing = acc.find((item) => item.name === monthYear);
         if (existing) {
-            if (t.type === 'income') {
-                existing.income += t.amount;
+            if (t.type === 'Gelir') {
+                existing.Gelir += t.amount;
             } else {
-                existing.expense += t.amount;
+                existing.Gider += t.amount;
             }
         } else {
             acc.push({
                 name: monthYear,
                 rawDate: date,
-                income: t.type === 'income' ? t.amount : 0,
-                expense: t.type === 'expense' ? t.amount : 0,
+                Gelir: t.type === 'Gelir' ? t.amount : 0,
+                Gider: t.type === 'Gider' ? t.amount : 0,
             });
         }
         return acc;
-    }, [] as { name: string; rawDate: Date; income: number; expense: number }[])
+    }, [] as { name: string; rawDate: Date; Gelir: number; Gider: number }[])
         .sort((a, b) => a.rawDate.getTime() - b.rawDate.getTime());
 
     return (
@@ -148,8 +148,8 @@ export function FinanceSummary({ transactions }: FinanceSummaryProps) {
                                         labelStyle={{ color: '#9ca3af', marginBottom: '0.25rem' }}
                                         formatter={(value: number) => `${value.toLocaleString('tr-TR')}₺`}
                                     />
-                                    <Bar dataKey="income" fill="#10b981" radius={[6, 6, 0, 0]} name="Gelir" barSize={40} />
-                                    <Bar dataKey="expense" fill="#ef4444" radius={[6, 6, 0, 0]} name="Gider" barSize={40} />
+                                    <Bar dataKey="Gelir" fill="#10b981" radius={[6, 6, 0, 0]} name="Gelir" barSize={40} />
+                                    <Bar dataKey="Gider" fill="#ef4444" radius={[6, 6, 0, 0]} name="Gider" barSize={40} />
                                 </BarChart>
                             </ResponsiveContainer>
                         )}

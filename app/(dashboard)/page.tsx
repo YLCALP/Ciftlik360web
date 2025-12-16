@@ -19,7 +19,7 @@ export default function DashboardPage() {
         monthlyExpense: 0,
     });
     const [recentActivity, setRecentActivity] = useState<Transaction[]>([]);
-    const [chartData, setChartData] = useState<{ date: string; income: number; expense: number }[]>([]);
+    const [chartData, setChartData] = useState<{ date: string; gelir: number; gider: number }[]>([]);
     const [loading, setLoading] = useState(true);
     const supabase = createClient();
 
@@ -29,7 +29,8 @@ export default function DashboardPage() {
                 // Fetch Animals Count
                 const { count: animalsCount, error: animalsError } = await supabase
                     .from('animals')
-                    .select('*', { count: 'exact', head: true });
+                    .select('*', { count: 'exact', head: true })
+                    .eq('status', 'Aktif');
 
                 if (animalsError) throw animalsError;
 
@@ -52,12 +53,12 @@ export default function DashboardPage() {
 
                 if (transactionsError) throw transactionsError;
 
-                let income = 0;
-                let expense = 0;
+                let gelir = 0;
+                let gider = 0;
 
                 monthlyTransactions?.forEach(t => {
-                    if (t.type === 'income') income += t.amount;
-                    else if (t.type === 'expense') expense += t.amount;
+                    if (t.type === 'Gelir') gelir += t.amount;
+                    else if (t.type === 'Gider') gider += t.amount;
                 });
 
                 // Fetch Chart Data (Last 6 months)
@@ -70,7 +71,7 @@ export default function DashboardPage() {
                 if (chartError) throw chartError;
 
                 // Process chart data
-                const processedChartData = new Map<string, { date: string; income: number; expense: number }>();
+                const processedChartData = new Map<string, { date: string; gelir: number; gider: number }>();
 
                 // Initialize last 6 months
                 for (let i = 0; i < 6; i++) {
@@ -78,8 +79,8 @@ export default function DashboardPage() {
                     const key = format(date, 'yyyy-MM');
                     processedChartData.set(key, {
                         date: date.toISOString(),
-                        income: 0,
-                        expense: 0
+                        gelir: 0,
+                        gider: 0
                     });
                 }
 
@@ -88,8 +89,8 @@ export default function DashboardPage() {
                     const key = format(date, 'yyyy-MM');
                     if (processedChartData.has(key)) {
                         const entry = processedChartData.get(key)!;
-                        if (t.type === 'income') entry.income += t.amount;
-                        else entry.expense += t.amount;
+                        if (t.type === 'Gelir') entry.gelir += t.amount;
+                        else entry.gider += t.amount;
                     }
                 });
 
@@ -111,8 +112,8 @@ export default function DashboardPage() {
                     totalAnimals: animalsCount || 0,
                     sickAnimals: 0,
                     lowStockItems: lowStockCount || 0,
-                    monthlyIncome: income,
-                    monthlyExpense: expense,
+                    monthlyIncome: gelir,
+                    monthlyExpense: gider,
                 });
                 setRecentActivity(recentData || []);
 
@@ -222,11 +223,11 @@ export default function DashboardPage() {
                                     <div key={transaction.id} className="flex items-center group">
                                         <div className={`
                                             flex h-9 w-9 items-center justify-center rounded-full border transition-colors
-                                            ${transaction.type === 'income'
+                                            ${transaction.type === 'Gelir'
                                                 ? 'bg-green-500/10 border-green-500/20 group-hover:bg-green-500/20'
                                                 : 'bg-red-500/10 border-red-500/20 group-hover:bg-red-500/20'}
                                         `}>
-                                            {transaction.type === 'income'
+                                            {transaction.type === 'Gelir'
                                                 ? <ArrowUpRight className="h-4 w-4 text-green-500" />
                                                 : <ArrowDownRight className="h-4 w-4 text-red-500" />
                                             }
@@ -239,9 +240,9 @@ export default function DashboardPage() {
                                                 {format(new Date(transaction.date), 'd MMMM yyyy', { locale: tr })}
                                             </p>
                                         </div>
-                                        <div className={`ml-auto font-medium ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'
+                                        <div className={`ml-auto font-medium ${transaction.type === 'Gelir' ? 'text-green-600' : 'text-red-600'
                                             }`}>
-                                            {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                                            {transaction.type === 'Gelir' ? '+' : '-'}{formatCurrency(transaction.amount)}
                                         </div>
                                     </div>
                                 ))

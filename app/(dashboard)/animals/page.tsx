@@ -53,6 +53,8 @@ export default function AnimalsPage() {
     const [statusFilter, setStatusFilter] = useState<string>('Hepsi');
     const [typeFilter, setTypeFilter] = useState<string>('Hepsi');
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const supabase = createClient();
 
     useEffect(() => {
@@ -90,6 +92,7 @@ export default function AnimalsPage() {
     });
 
     const handleCreate = async (values: any) => {
+        setIsSubmitting(true);
         try {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) throw new Error('Kullanıcı bulunamadı');
@@ -121,11 +124,14 @@ export default function AnimalsPage() {
         } catch (error) {
             console.error('Error creating animal:', error);
             toast.error('Hata!', 'Hayvan eklenirken bir sorun oluştu.');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     const handleUpdate = async (values: any) => {
         if (!selectedAnimal) return;
+        setIsSubmitting(true);
         try {
             const updatedAnimal = {
                 ...values,
@@ -158,6 +164,8 @@ export default function AnimalsPage() {
         } catch (error) {
             console.error('Error updating animal:', error);
             toast.error('Hata!', 'Hayvan güncellenirken bir sorun oluştu.');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -315,6 +323,9 @@ export default function AnimalsPage() {
                                         'Doğum Tarihi': a.birth_date || '-',
                                         'Kilo': a.weight || '-',
                                         'Alış Fiyatı': a.purchase_price,
+                                        'Alış Tarihi': a.purchase_date,
+                                        'Satış Fiyatı': a.sold_price || '-',
+                                        'Satış Tarihi': a.sold_date || '-',
                                         'Durum': a.status || 'Aktif'
                                     })),
                                     'Hayvanlar'
@@ -358,6 +369,7 @@ export default function AnimalsPage() {
                             <AnimalForm
                                 onSubmit={handleCreate}
                                 onCancel={() => setIsAddDialogOpen(false)}
+                                loading={isSubmitting}
                             />
                         </DialogContent>
                     </Dialog>
@@ -403,6 +415,7 @@ export default function AnimalsPage() {
                             initialData={selectedAnimal}
                             onSubmit={handleUpdate}
                             onCancel={() => setIsEditDialogOpen(false)}
+                            loading={isSubmitting}
                         />
                     )}
                 </DialogContent>

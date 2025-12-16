@@ -104,11 +104,28 @@ export default function FinancePage() {
 
             if (error) throw error;
 
+            // If this is an animal sale, update the animal status to "Satıldı"
+            if (data.category === 'hayvan_satisi' && data.animal_id) {
+                const { error: animalError } = await supabase
+                    .from('animals')
+                    .update({
+                        status: 'Satıldı',
+                        sold_date: data.date,
+                        sold_price: data.amount,
+                    })
+                    .eq('id', data.animal_id);
+
+                if (animalError) {
+                    console.error('Error updating animal status:', animalError);
+                    toast.error('Uyarı!', 'İşlem eklendi ancak hayvan durumu güncellenemedi.');
+                }
+            }
+
             setTransactions([insertedData, ...transactions]);
             setIsModalOpen(false);
             toast.success(
                 'İşlem eklendi!',
-                `${data.type === 'income' ? 'Gelir' : 'Gider'} kaydı başarıyla oluşturuldu.`
+                `${data.type === 'Gelir' ? 'Gelir' : 'Gider'} kaydı başarıyla oluşturuldu.`
             );
         } catch (error) {
             console.error('Error creating transaction:', error);
@@ -172,7 +189,6 @@ export default function FinancePage() {
                                 mode="single"
                                 selected={dateFilter.end ? new Date(dateFilter.end) : undefined}
                                 onSelect={(date) => setDateFilter(prev => ({ ...prev, end: date ? format(date, 'yyyy-MM-dd') : '' }))}
-                                initialFocus
                             />
                         </PopoverContent>
                     </Popover>
@@ -185,8 +201,8 @@ export default function FinancePage() {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="Hepsi">Tüm İşlemler</SelectItem>
-                            <SelectItem value="income">Gelir</SelectItem>
-                            <SelectItem value="expense">Gider</SelectItem>
+                            <SelectItem value="Gelir">Gelir</SelectItem>
+                            <SelectItem value="Gider">Gider</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -216,7 +232,7 @@ export default function FinancePage() {
                                         'Tarih': t.date,
                                         'Açıklama': t.description,
                                         'Kategori': t.category,
-                                        'Tür': t.type === 'income' ? 'Gelir' : 'Gider',
+                                        'Tür': t.type === 'Gelir' ? 'Gelir' : 'Gider',
                                         'Tutar': t.amount,
                                         'Notlar': t.notes || '-',
                                     })),

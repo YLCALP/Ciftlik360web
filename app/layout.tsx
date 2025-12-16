@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
+import { AuthErrorHandler } from "@/components/auth-error-handler"
 
 export default function RootLayout({
   children,
@@ -36,6 +37,7 @@ export default function RootLayout({
           enableSystem
           storageKey="ciftlik360-theme"
         >
+          <AuthErrorHandler />
           {children}
           <Toaster />
         </ThemeProvider>

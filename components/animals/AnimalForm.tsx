@@ -20,6 +20,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Combobox } from '@/components/ui/combobox';
 import { Textarea } from '@/components/ui/textarea';
 import { Animal } from '@/lib/types';
 import { Calendar } from '@/components/ui/calendar';
@@ -46,6 +47,27 @@ const formSchema = z.object({
     status: z.string().default('Aktif'),
     notes: z.string().optional(),
 });
+
+const speciesOptions = [
+    { value: "Inek", label: "İnek" },
+    { value: "Dana", label: "Dana" },
+    { value: "Duve", label: "Düve" },
+    { value: "Koyun", label: "Koyun" },
+    { value: "Keci", label: "Keçi" },
+    { value: "Tavuk", label: "Tavuk" },
+];
+
+const genderOptions = [
+    { value: "Disi", label: "Dişi" },
+    { value: "Erkek", label: "Erkek" },
+];
+
+const statusOptions = [
+    { value: "Aktif", label: "Aktif" },
+    { value: "Hasta", label: "Hasta" },
+    { value: "Satildi", label: "Satıldı" },
+    { value: "Oldu", label: "Öldü" },
+];
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -118,21 +140,15 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Tür</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Tür seçin" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="Inek">İnek</SelectItem>
-                                        <SelectItem value="Dana">Dana</SelectItem>
-                                        <SelectItem value="Duve">Düve</SelectItem>
-                                        <SelectItem value="Koyun">Koyun</SelectItem>
-                                        <SelectItem value="Keci">Keçi</SelectItem>
-                                        <SelectItem value="Tavuk">Tavuk</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                <FormControl>
+                                    <Combobox
+                                        options={speciesOptions}
+                                        value={field.value}
+                                        onSelect={field.onChange}
+                                        placeholder="Tür seçin"
+                                        searchPlaceholder="Tür ara..."
+                                    />
+                                </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -156,17 +172,15 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Cinsiyet</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Cinsiyet seçin" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="Disi">Dişi</SelectItem>
-                                        <SelectItem value="Erkek">Erkek</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                <FormControl>
+                                    <Combobox
+                                        options={genderOptions}
+                                        value={field.value}
+                                        onSelect={field.onChange}
+                                        placeholder="Cinsiyet seçin"
+                                        searchPlaceholder="Cinsiyet ara..."
+                                    />
+                                </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -177,19 +191,15 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Durum</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Durum seçin" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="Aktif">Aktif</SelectItem>
-                                        <SelectItem value="Hasta">Hasta</SelectItem>
-                                        <SelectItem value="Satildi">Satıldı</SelectItem>
-                                        <SelectItem value="Oldu">Öldü</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                <FormControl>
+                                    <Combobox
+                                        options={statusOptions}
+                                        value={field.value}
+                                        onSelect={field.onChange}
+                                        placeholder="Durum seçin"
+                                        searchPlaceholder="Durum ara..."
+                                    />
+                                </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -332,7 +342,7 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                             İptal
                         </Button>
                     )}
-                    <Button type="submit" disabled={loading}>
+                    <Button type="submit" disabled={loading} loading={loading}>
                         {loading ? 'Kaydediliyor...' : 'Hayvanı Kaydet'}
                     </Button>
                 </div>
