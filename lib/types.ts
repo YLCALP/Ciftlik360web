@@ -1,4 +1,12 @@
-export type AnimalStatus = 'Aktif' | 'Hasta' | 'Gebe' | 'Satıldı' | 'Öldü';
+export const ANIMAL_STATUS = {
+  AKTIF: 'Aktif',
+  HASTA: 'Hasta',
+  GEBE: 'Gebe',
+  SATILDI: 'Satıldı',
+  OLDU: 'Öldü',
+} as const;
+
+export type AnimalStatus = (typeof ANIMAL_STATUS)[keyof typeof ANIMAL_STATUS];
 export type AnimalType = 'Inek' | 'Koyun' | 'Keci' | 'Tavuk';
 
 export interface Animal {

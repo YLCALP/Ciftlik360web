@@ -49,7 +49,7 @@ export function Sidebar() {
             )}
         >
             <div className="flex h-16 items-center justify-between px-4 border-b">
-                {!isCollapsed && <h1 className="text-2xl font-bold text-primary truncate">Farm360</h1>}
+                {!isCollapsed && <h1 className="text-2xl font-bold text-primary truncate">Çiftlik360</h1>}
                 <Button
                     variant="ghost"
                     size="icon"

@@ -135,76 +135,78 @@ export default function FinancePage() {
 
     return (
         <div className="space-y-6 animate-fade-in">
-            <div className="flex gap-4 items-end bg-card p-4 rounded-lg border shadow-sm animate-slide-up delay-100">
-                <div className="grid gap-1.5">
-                    <Label htmlFor="start-date">Başlangıç Tarihi</Label>
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <Button
-                                variant={"outline"}
-                                className={cn(
-                                    "w-[200px] pl-3 text-left font-normal",
-                                    !dateFilter.start && "text-muted-foreground"
-                                )}
-                            >
-                                {dateFilter.start ? (
-                                    format(new Date(dateFilter.start), "PPP", { locale: tr })
-                                ) : (
-                                    <span>Tarih seçin</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[340px] p-0" align="start">
-                            <Calendar
-                                mode="single"
-                                selected={dateFilter.start ? new Date(dateFilter.start) : undefined}
-                                onSelect={(date) => setDateFilter(prev => ({ ...prev, start: date ? format(date, 'yyyy-MM-dd') : '' }))}
-                                initialFocus
-                            />
-                        </PopoverContent>
-                    </Popover>
-                </div>
-                <div className="grid gap-1.5">
-                    <Label htmlFor="end-date">Bitiş Tarihi</Label>
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <Button
-                                variant={"outline"}
-                                className={cn(
-                                    "w-[200px] pl-3 text-left font-normal",
-                                    !dateFilter.end && "text-muted-foreground"
-                                )}
-                            >
-                                {dateFilter.end ? (
-                                    format(new Date(dateFilter.end), "PPP", { locale: tr })
-                                ) : (
-                                    <span>Tarih seçin</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[340px] p-0" align="start">
-                            <Calendar
-                                mode="single"
-                                selected={dateFilter.end ? new Date(dateFilter.end) : undefined}
-                                onSelect={(date) => setDateFilter(prev => ({ ...prev, end: date ? format(date, 'yyyy-MM-dd') : '' }))}
-                            />
-                        </PopoverContent>
-                    </Popover>
-                </div>
-                <div className="grid gap-1.5">
-                    <Label>Tür</Label>
-                    <Select value={typeFilter} onValueChange={setTypeFilter}>
-                        <SelectTrigger className="w-[200px]">
-                            <SelectValue placeholder="Türe göre filtrele" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="Hepsi">Tüm İşlemler</SelectItem>
-                            <SelectItem value="Gelir">Gelir</SelectItem>
-                            <SelectItem value="Gider">Gider</SelectItem>
-                        </SelectContent>
-                    </Select>
+            <div className="flex flex-col gap-4 bg-card p-4 rounded-lg border shadow-sm animate-slide-up delay-100">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid gap-1.5">
+                        <Label htmlFor="start-date">Başlangıç Tarihi</Label>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant={"outline"}
+                                    className={cn(
+                                        "w-full pl-3 text-left font-normal",
+                                        !dateFilter.start && "text-muted-foreground"
+                                    )}
+                                >
+                                    {dateFilter.start ? (
+                                        format(new Date(dateFilter.start), "PPP", { locale: tr })
+                                    ) : (
+                                        <span>Tarih seçin</span>
+                                    )}
+                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-[340px] p-0" align="start">
+                                <Calendar
+                                    mode="single"
+                                    selected={dateFilter.start ? new Date(dateFilter.start) : undefined}
+                                    onSelect={(date) => setDateFilter(prev => ({ ...prev, start: date ? format(date, 'yyyy-MM-dd') : '' }))}
+                                    initialFocus
+                                />
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                    <div className="grid gap-1.5">
+                        <Label htmlFor="end-date">Bitiş Tarihi</Label>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant={"outline"}
+                                    className={cn(
+                                        "w-full pl-3 text-left font-normal",
+                                        !dateFilter.end && "text-muted-foreground"
+                                    )}
+                                >
+                                    {dateFilter.end ? (
+                                        format(new Date(dateFilter.end), "PPP", { locale: tr })
+                                    ) : (
+                                        <span>Tarih seçin</span>
+                                    )}
+                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-[340px] p-0" align="start">
+                                <Calendar
+                                    mode="single"
+                                    selected={dateFilter.end ? new Date(dateFilter.end) : undefined}
+                                    onSelect={(date) => setDateFilter(prev => ({ ...prev, end: date ? format(date, 'yyyy-MM-dd') : '' }))}
+                                />
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                    <div className="grid gap-1.5">
+                        <Label>Tür</Label>
+                        <Select value={typeFilter} onValueChange={setTypeFilter}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Türe göre filtrele" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="Hepsi">Tüm İşlemler</SelectItem>
+                                <SelectItem value="Gelir">Gelir</SelectItem>
+                                <SelectItem value="Gider">Gider</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
                 {(dateFilter.start || dateFilter.end || typeFilter !== 'Hepsi') && (
                     <Button
@@ -218,7 +220,7 @@ export default function FinancePage() {
                         Filtreyi Temizle
                     </Button>
                 )}
-                <div className="flex gap-2 ml-auto mb-0.5">
+                <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto sm:ml-auto">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline">

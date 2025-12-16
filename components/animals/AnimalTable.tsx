@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Animal } from '@/lib/types';
+import { Animal, ANIMAL_STATUS } from '@/lib/types';
 import {
     Table,
     TableBody,
@@ -151,27 +151,25 @@ export function AnimalTable({ animals, onDelete, onEdit, onSell }: AnimalTablePr
                                         variant="ghost"
                                         size="icon"
                                         onClick={() => onEdit(animal)}
-                                        disabled={animal.status?.toLowerCase() === 'satildi'}
-                                        title={animal.status?.toLowerCase() === 'satildi' ? 'Satılmış hayvanlar düzenlenemez' : 'Düzenle'}
+                                        disabled={animal.status === ANIMAL_STATUS.SATILDI}
                                     >
                                         <Edit className="h-4 w-4" />
                                     </Button>
-                                    {animal.status?.toLowerCase() !== 'satildi' && (
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="text-green-600 hover:text-green-700"
-                                            onClick={() => onSell(animal)}
-                                            title="Hayvan Sat"
-                                        >
-                                            <BadgeTurkishLira className="h-4 w-4" />
-                                        </Button>
-                                    )}
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="text-green-600 hover:text-green-700"
+                                        onClick={() => onSell(animal)}
+                                        disabled={animal.status === ANIMAL_STATUS.SATILDI}
+                                    >
+                                        <BadgeTurkishLira className="h-4 w-4" />
+                                    </Button>
                                     <Button
                                         variant="ghost"
                                         size="icon"
                                         className="text-destructive"
                                         onClick={() => onDelete(animal.id)}
+                                        disabled={animal.status === ANIMAL_STATUS.SATILDI}
                                     >
                                         <Trash className="h-4 w-4" />
                                     </Button>

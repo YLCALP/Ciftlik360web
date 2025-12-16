@@ -154,9 +154,9 @@ export default function AnimalDetailPage() {
                 </Card>
 
                 <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-2">
                         <CardTitle>Masraflar</CardTitle>
-                        <Button size="sm" onClick={() => setIsModalOpen(true)}>
+                        <Button size="sm" onClick={() => setIsModalOpen(true)} className="w-full sm:w-auto">
                             <Plus className="mr-2 h-4 w-4" /> Masraf Ekle
                         </Button>
                     </CardHeader>
