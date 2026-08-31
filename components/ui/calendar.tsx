@@ -30,7 +30,7 @@ function Calendar({
         <DayPicker
             showOutsideDays={showOutsideDays}
             className={cn(
-                "w-fit bg-popover p-5 text-popover-foreground",
+                "w-fit bg-popover p-3 text-popover-foreground",
                 className
             )}
             captionLayout={captionLayout}
@@ -48,15 +48,15 @@ function Calendar({
                     defaultClassNames.months
                 ),
                 month: cn(
-                    "grid w-full grid-cols-[2rem_1fr_2rem] grid-rows-[auto_auto] items-center gap-y-5",
+                    "grid w-full grid-cols-[1.75rem_1fr_1.75rem] grid-rows-[auto_auto] items-center gap-y-2",
                     defaultClassNames.month
                 ),
                 button_previous: cn(
-                    "col-start-1 row-start-1 size-8 bg-transparent p-0 opacity-70 hover:opacity-100",
+                    "col-start-1 row-start-1 size-7 bg-transparent p-0 opacity-70 hover:opacity-100",
                     defaultClassNames.button_previous
                 ),
                 button_next: cn(
-                    "col-start-3 row-start-1 size-8 bg-transparent p-0 opacity-70 hover:opacity-100",
+                    "col-start-3 row-start-1 size-7 bg-transparent p-0 opacity-70 hover:opacity-100",
                     defaultClassNames.button_next
                 ),
                 month_caption: cn(
@@ -79,12 +79,12 @@ function Calendar({
                 month_grid: "col-span-3 row-start-2 w-full border-collapse",
                 weekdays: cn("flex", defaultClassNames.weekdays),
                 weekday: cn(
-                    "text-muted-foreground w-10 font-normal text-sm text-center",
+                    "text-muted-foreground w-9 font-normal text-sm text-center",
                     defaultClassNames.weekday
                 ),
-                week: cn("flex w-full mt-2", defaultClassNames.week),
+                week: cn("flex w-full mt-1", defaultClassNames.week),
                 week_number_header: cn(
-                    "w-10",
+                    "w-9",
                     defaultClassNames.week_number_header
                 ),
                 week_number: cn(
@@ -137,7 +137,7 @@ function Calendar({
                 WeekNumber: ({ children, ...props }) => {
                     return (
                         <td {...props}>
-                            <div className="flex h-10 w-10 items-center justify-center text-center">
+                            <div className="flex h-8 w-9 items-center justify-center text-center">
                                 {children}
                             </div>
                         </td>
@@ -168,7 +168,7 @@ function CalendarDayButton({
             ref={ref}
             variant="ghost"
             className={cn(
-                "h-10 w-10 rounded-lg p-0 text-base font-normal text-foreground hover:bg-accent hover:text-accent-foreground",
+                "h-8 w-9 rounded-lg p-0 text-sm font-normal text-foreground hover:bg-accent hover:text-accent-foreground",
                 "aria-selected:opacity-100",
                 modifiers.selected && "bg-foreground/10 font-medium text-foreground hover:bg-foreground/15",
                 modifiers.today && !modifiers.selected && "font-semibold ring-1 ring-inset ring-border",
