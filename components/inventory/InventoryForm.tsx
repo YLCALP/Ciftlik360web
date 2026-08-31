@@ -229,7 +229,7 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                                             </Button>
                                         </FormControl>
                                     </PopoverTrigger>
-                                    <PopoverContent className="w-[340px] p-0" align="start">
+                                    <PopoverContent className="w-auto p-0" align="start">
                                         <Calendar
                                             mode="single"
                                             selected={field.value}
@@ -270,7 +270,7 @@ export function InventoryForm({ defaultValues, onSubmit, onCancel, isLoading }: 
                                             </Button>
                                         </FormControl>
                                     </PopoverTrigger>
-                                    <PopoverContent className="w-[340px] p-0" align="start">
+                                    <PopoverContent className="w-auto p-0" align="start">
                                         <Calendar
                                             mode="single"
                                             selected={field.value}

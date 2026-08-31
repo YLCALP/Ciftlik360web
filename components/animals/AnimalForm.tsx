@@ -229,7 +229,7 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                                             </Button>
                                         </FormControl>
                                     </PopoverTrigger>
-                                    <PopoverContent className="w-[340px] p-0" align="start">
+                                    <PopoverContent className="w-auto p-0" align="start">
                                         <Calendar
                                             mode="single"
                                             selected={field.value ? new Date(field.value) : undefined}
@@ -270,7 +270,7 @@ export function AnimalForm({ initialData, onSubmit, loading, onCancel }: AnimalF
                                             </Button>
                                         </FormControl>
                                     </PopoverTrigger>
-                                    <PopoverContent className="w-[340px] p-0" align="start">
+                                    <PopoverContent className="w-auto p-0" align="start">
                                         <Calendar
                                             mode="single"
                                             selected={field.value ? new Date(field.value) : undefined}
