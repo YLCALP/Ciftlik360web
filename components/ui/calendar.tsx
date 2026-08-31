@@ -21,6 +21,7 @@ function Calendar({
     formatters,
     components,
     locale = tr,
+    navLayout = "around",
     ...props
 }: CalendarProps) {
     const defaultClassNames = getDefaultClassNames()
@@ -29,10 +30,11 @@ function Calendar({
         <DayPicker
             showOutsideDays={showOutsideDays}
             className={cn(
-                "p-4 w-[280px] bg-popover text-popover-foreground",
+                "w-fit bg-popover p-3 text-popover-foreground",
                 className
             )}
             captionLayout={captionLayout}
+            navLayout={navLayout}
             locale={locale}
             formatters={{
                 formatMonthDropdown: (date) =>
@@ -45,21 +47,20 @@ function Calendar({
                     "flex flex-col",
                     defaultClassNames.months
                 ),
-                month: cn("w-full space-y-4", defaultClassNames.month),
-                nav: cn(
-                    "flex items-center justify-between w-full mb-4",
-                    defaultClassNames.nav
+                month: cn(
+                    "grid w-full grid-cols-[1.75rem_1fr_1.75rem] grid-rows-[auto_auto] items-center gap-y-2",
+                    defaultClassNames.month
                 ),
                 button_previous: cn(
-                    "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
+                    "col-start-1 row-start-1 size-7 bg-transparent p-0 opacity-70 hover:opacity-100",
                     defaultClassNames.button_previous
                 ),
                 button_next: cn(
-                    "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
+                    "col-start-3 row-start-1 size-7 bg-transparent p-0 opacity-70 hover:opacity-100",
                     defaultClassNames.button_next
                 ),
                 month_caption: cn(
-                    "flex justify-center items-center h-7 flex-1",
+                    "col-start-2 row-start-1 flex h-8 items-center justify-center",
                     defaultClassNames.month_caption
                 ),
                 dropdowns: cn(
@@ -72,13 +73,13 @@ function Calendar({
                 ),
                 dropdown: cn("absolute inset-0 w-full opacity-0 cursor-pointer", defaultClassNames.dropdown),
                 caption_label: cn(
-                    "text-sm font-medium",
+                    "text-base font-semibold",
                     defaultClassNames.caption_label
                 ),
-                table: "w-full border-collapse mt-4",
+                month_grid: "col-span-3 row-start-2 w-full border-collapse",
                 weekdays: cn("flex", defaultClassNames.weekdays),
                 weekday: cn(
-                    "text-muted-foreground w-9 font-normal text-[0.8rem] text-center",
+                    "text-muted-foreground w-9 font-normal text-sm text-center",
                     defaultClassNames.weekday
                 ),
                 week: cn("flex w-full mt-1", defaultClassNames.week),
@@ -94,13 +95,10 @@ function Calendar({
                     "relative p-0 text-center text-sm focus-within:relative focus-within:z-20",
                     defaultClassNames.day
                 ),
-                range_start: cn("rounded-l-md", defaultClassNames.range_start),
+                range_start: cn("rounded-l-lg", defaultClassNames.range_start),
                 range_middle: cn("rounded-none", defaultClassNames.range_middle),
-                range_end: cn("rounded-r-md", defaultClassNames.range_end),
-                today: cn(
-                    "bg-accent text-accent-foreground",
-                    defaultClassNames.today
-                ),
+                range_end: cn("rounded-r-lg", defaultClassNames.range_end),
+                today: cn(defaultClassNames.today),
                 outside: cn(
                     "text-muted-foreground opacity-50",
                     defaultClassNames.outside
@@ -123,23 +121,23 @@ function Calendar({
                 Chevron: ({ className, orientation, ...props }) => {
                     if (orientation === "left") {
                         return (
-                            <ChevronLeftIcon className={cn("h-4 w-4", className)} {...props} />
+                            <ChevronLeftIcon className={cn("size-5", className)} {...props} />
                         )
                     }
                     if (orientation === "right") {
                         return (
-                            <ChevronRightIcon className={cn("h-4 w-4", className)} {...props} />
+                            <ChevronRightIcon className={cn("size-5", className)} {...props} />
                         )
                     }
                     return (
-                        <ChevronDownIcon className={cn("h-4 w-4", className)} {...props} />
+                        <ChevronDownIcon className={cn("size-5", className)} {...props} />
                     )
                 },
                 DayButton: CalendarDayButton,
                 WeekNumber: ({ children, ...props }) => {
                     return (
                         <td {...props}>
-                            <div className="flex h-9 w-9 items-center justify-center text-center">
+                            <div className="flex h-8 w-9 items-center justify-center text-center">
                                 {children}
                             </div>
                         </td>
@@ -170,10 +168,10 @@ function CalendarDayButton({
             ref={ref}
             variant="ghost"
             className={cn(
-                "h-9 w-9 p-0 font-normal text-foreground hover:bg-accent hover:text-accent-foreground",
+                "h-8 w-9 rounded-lg p-0 text-sm font-normal text-foreground hover:bg-accent hover:text-accent-foreground",
                 "aria-selected:opacity-100",
-                modifiers.selected && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-                modifiers.today && !modifiers.selected && "bg-accent text-accent-foreground font-semibold",
+                modifiers.selected && "bg-foreground/10 font-medium text-foreground hover:bg-foreground/15",
+                modifiers.today && !modifiers.selected && "font-semibold ring-1 ring-inset ring-border",
                 modifiers.outside && "text-muted-foreground opacity-50",
                 modifiers.disabled && "text-muted-foreground opacity-50 cursor-not-allowed",
                 className

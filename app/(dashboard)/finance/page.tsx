@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { TransactionList } from '@/components/finance/TransactionList';
-import { FinanceSummary } from '@/components/finance/FinanceSummary';
+import { FinanceStats } from '@/components/finance/FinanceStats';
+import { FinanceChart } from '@/components/finance/FinanceChart';
 import { TransactionModal } from '@/components/finance/TransactionModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,6 +40,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { exportToExcel, exportToPDF } from '@/lib/export';
+import { PageHeader } from '@/components/shared/PageHeader';
 
 export default function FinancePage() {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -109,7 +111,7 @@ export default function FinancePage() {
                 const { error: animalError } = await supabase
                     .from('animals')
                     .update({
-                        status: 'Satıldı',
+                        status: 'Satildi',
                         sold_date: data.date,
                         sold_price: data.amount,
                     })
@@ -134,9 +136,62 @@ export default function FinancePage() {
     };
 
     return (
-        <div className="space-y-6 animate-fade-in">
-            <div className="flex flex-col gap-4 bg-card p-4 rounded-lg border shadow-sm animate-slide-up delay-100">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="space-y-6">
+            <PageHeader
+                title="Finans"
+                actions={
+                    <>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline">
+                                    <Download className="mr-2 h-4 w-4" /> Dışa Aktar
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuItem onClick={() => {
+                                    const success = exportToExcel(
+                                        filteredTransactions.map((t: Transaction) => ({
+                                            'Tarih': t.date,
+                                            'Açıklama': t.description,
+                                            'Kategori': t.category,
+                                            'Tür': t.type === 'Gelir' ? 'Gelir' : 'Gider',
+                                            'Tutar': t.amount,
+                                            'Notlar': t.notes || '-',
+                                        })),
+                                        'İşlemler'
+                                    );
+                                    if (success) toast.success('Başarılı!', 'Excel dosyası indirildi.');
+                                    else toast.error('Hata!', 'Dışa aktarma başarısız.');
+                                }}>
+                                    Excel (.xlsx)
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => {
+                                    const success = exportToPDF(
+                                        filteredTransactions,
+                                        [
+                                            { header: 'Tarih', dataKey: 'date' },
+                                            { header: 'Açıklama', dataKey: 'description' },
+                                            { header: 'Kategori', dataKey: 'category' },
+                                            { header: 'Tür', dataKey: 'type' },
+                                            { header: 'Tutar', dataKey: 'amount' },
+                                        ],
+                                        'İşlemler',
+                                        'Finans İşlemler Listesi'
+                                    );
+                                    if (success) toast.success('Başarılı!', 'PDF dosyası indirildi.');
+                                    else toast.error('Hata!', 'Dışa aktarma başarısız.');
+                                }}>
+                                    PDF (.pdf)
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                        <Button onClick={() => setIsModalOpen(true)}>
+                            <Plus className="mr-2 h-4 w-4" /> İşlem Ekle
+                        </Button>
+                    </>
+                }
+            >
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     <div className="grid gap-1.5">
                         <Label htmlFor="start-date">Başlangıç Tarihi</Label>
                         <Popover>
@@ -156,7 +211,7 @@ export default function FinancePage() {
                                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                 </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-[340px] p-0" align="start">
+                            <PopoverContent className="w-auto rounded-2xl p-0" align="start">
                                 <Calendar
                                     mode="single"
                                     selected={dateFilter.start ? new Date(dateFilter.start) : undefined}
@@ -185,7 +240,7 @@ export default function FinancePage() {
                                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                 </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-[340px] p-0" align="start">
+                            <PopoverContent className="w-auto rounded-2xl p-0" align="start">
                                 <Calendar
                                     mode="single"
                                     selected={dateFilter.end ? new Date(dateFilter.end) : undefined}
@@ -215,62 +270,12 @@ export default function FinancePage() {
                             setDateFilter({ start: '', end: '' });
                             setTypeFilter('Hepsi');
                         }}
-                        className="mb-0.5"
+                        className="w-fit"
                     >
                         Filtreyi Temizle
                     </Button>
                 )}
-                <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto sm:ml-auto">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline">
-                                <Download className="mr-2 h-4 w-4" /> Dışa Aktar
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuItem onClick={() => {
-                                const success = exportToExcel(
-                                    filteredTransactions.map((t: Transaction) => ({
-                                        'Tarih': t.date,
-                                        'Açıklama': t.description,
-                                        'Kategori': t.category,
-                                        'Tür': t.type === 'Gelir' ? 'Gelir' : 'Gider',
-                                        'Tutar': t.amount,
-                                        'Notlar': t.notes || '-',
-                                    })),
-                                    'İşlemler'
-                                );
-                                if (success) toast.success('Başarılı!', 'Excel dosyası indirildi.');
-                                else toast.error('Hata!', 'Dışa aktarma başarısız.');
-                            }}>
-                                Excel (.xlsx)
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => {
-                                const success = exportToPDF(
-                                    filteredTransactions,
-                                    [
-                                        { header: 'Tarih', dataKey: 'date' },
-                                        { header: 'Açıklama', dataKey: 'description' },
-                                        { header: 'Kategori', dataKey: 'category' },
-                                        { header: 'Tür', dataKey: 'type' },
-                                        { header: 'Tutar', dataKey: 'amount' },
-                                    ],
-                                    'İşlemler',
-                                    'Finans İşlemler Listesi'
-                                );
-                                if (success) toast.success('Başarılı!', 'PDF dosyası indirildi.');
-                                else toast.error('Hata!', 'Dışa aktarma başarısız.');
-                            }}>
-                                PDF (.pdf)
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                    <Button onClick={() => setIsModalOpen(true)}>
-                        <Plus className="mr-2 h-4 w-4" /> İşlem Ekle
-                    </Button>
-                </div>
-
-            </div>
+            </PageHeader>
 
             {loading ? (
                 <FinanceSkeleton />
@@ -283,8 +288,9 @@ export default function FinancePage() {
                     onAction={() => setIsModalOpen(true)}
                 />
             ) : (
-                <div className="space-y-6 animate-slide-up delay-200">
-                    <FinanceSummary transactions={filteredTransactions} />
+                <div className="space-y-6">
+                    <FinanceStats transactions={filteredTransactions} />
+                    <FinanceChart transactions={filteredTransactions} />
                     <TransactionList transactions={filteredTransactions} />
                 </div>
             )}

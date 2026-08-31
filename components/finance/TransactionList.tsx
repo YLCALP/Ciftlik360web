@@ -11,6 +11,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { ArrowUpDown } from 'lucide-react';
+import { formatCurrency, formatDate } from '@/lib/format';
 
 interface TransactionListProps {
     transactions: Transaction[];
@@ -93,7 +94,7 @@ export function TransactionList({ transactions }: TransactionListProps) {
                 <TableBody>
                     {sortedTransactions.map((transaction) => (
                         <TableRow key={transaction.id}>
-                            <TableCell>{new Date(transaction.date).toLocaleDateString('tr-TR')}</TableCell>
+                            <TableCell className="tnum">{formatDate(transaction.date)}</TableCell>
                             <TableCell>
                                 {transaction.description}
                                 {transaction.is_automatic && (
@@ -103,13 +104,11 @@ export function TransactionList({ transactions }: TransactionListProps) {
                             <TableCell className="capitalize">{translateCategory(transaction.category)}</TableCell>
                             <TableCell>
                                 <Badge
-                                    variant={
-                                        transaction.type === 'Gelir' ? 'default' : 'destructive'
-                                    }
                                     className={cn(
+                                        'border-transparent',
                                         transaction.type === 'Gelir'
-                                            ? 'bg-green-500 hover:bg-green-600'
-                                            : 'bg-red-500 hover:bg-red-600'
+                                            ? 'bg-chart-1/15 text-chart-1'
+                                            : 'bg-chart-5/15 text-chart-5'
                                     )}
                                 >
                                     {transaction.type === 'Gelir' ? 'Gelir' : 'Gider'}
@@ -117,14 +116,12 @@ export function TransactionList({ transactions }: TransactionListProps) {
                             </TableCell>
                             <TableCell
                                 className={cn(
-                                    'text-right font-medium',
-                                    transaction.type === 'Gelir'
-                                        ? 'text-green-600'
-                                        : 'text-red-600'
+                                    'text-figure text-right text-sm',
+                                    transaction.type === 'Gelir' ? 'text-chart-1' : 'text-chart-5'
                                 )}
                             >
                                 {transaction.type === 'Gelir' ? '+' : '-'}
-                                {transaction.amount.toLocaleString('tr-TR')}₺
+                                {formatCurrency(transaction.amount)}
                             </TableCell>
                         </TableRow>
                     ))}

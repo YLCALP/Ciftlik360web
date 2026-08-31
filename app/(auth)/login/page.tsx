@@ -18,6 +18,8 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 const formSchema = z.object({
     email: z.string().email({
@@ -99,7 +101,12 @@ export default function LoginPage() {
                                 </FormItem>
                             )}
                         />
-                        {error && <p className="text-sm text-red-500">{error}</p>}
+                        {error && (
+                            <Alert variant="destructive">
+                                <AlertCircle />
+                                <AlertDescription>{error}</AlertDescription>
+                            </Alert>
+                        )}
                         <Button type="submit" className="w-full" disabled={loading} id="submit-login">
                             {loading ? 'Giriş yapılıyor...' : 'Giriş Yap'}
                         </Button>
@@ -107,9 +114,9 @@ export default function LoginPage() {
                 </Form>
             </CardContent>
             <CardFooter className="flex justify-center">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted-foreground">
                     Hesabınız yok mu?{' '}
-                    <Link href="/signup" className="text-blue-600 hover:underline">
+                    <Link href="/signup" className="text-primary hover:underline">
                         Kaydol
                     </Link>
                 </p>

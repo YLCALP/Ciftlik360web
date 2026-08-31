@@ -11,6 +11,9 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowDown, ArrowUp, AlertTriangle, ArrowUpDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+const LOW_STOCK_THRESHOLD = 10;
 
 interface InventoryTableProps {
     items: InventoryItem[];
@@ -94,19 +97,35 @@ export function InventoryTable({ items, onStockIn, onStockOut }: InventoryTableP
                 </TableHeader>
                 <TableBody>
                     {sortedItems.map((item) => {
+                        const isOut = item.quantity === 0;
+                        const isLow = !isOut && item.quantity < LOW_STOCK_THRESHOLD;
                         return (
                             <TableRow key={item.id}>
                                 <TableCell className="font-medium">{item.feed_name}</TableCell>
                                 <TableCell>{translateFeedType(item.feed_type)}</TableCell>
                                 <TableCell>
-                                    <div className="flex items-center gap-2">
+                                    <div
+                                        className={cn(
+                                            'flex items-center gap-1.5 tnum',
+                                            isOut && 'text-chart-5',
+                                            isLow && 'text-chart-2'
+                                        )}
+                                    >
+                                        {(isOut || isLow) && <AlertTriangle className="h-3.5 w-3.5" />}
                                         {item.quantity}
                                     </div>
                                 </TableCell>
                                 <TableCell>{item.unit}</TableCell>
                                 <TableCell>
-                                    <Badge variant={item.quantity === 0 ? 'destructive' : 'outline'}>
-                                        {item.quantity === 0 ? 'Stok Yok' : 'Stokta'}
+                                    <Badge
+                                        className={cn(
+                                            'border-transparent',
+                                            isOut && 'bg-chart-5/15 text-chart-5',
+                                            isLow && 'bg-chart-2/15 text-chart-2',
+                                            !isOut && !isLow && 'bg-chart-1/15 text-chart-1'
+                                        )}
+                                    >
+                                        {isOut ? 'Stok Yok' : isLow ? 'Kritik Stok' : 'Stokta'}
                                     </Badge>
                                 </TableCell>
                                 <TableCell>{new Date(item.updated_at).toLocaleDateString()}</TableCell>
@@ -115,7 +134,7 @@ export function InventoryTable({ items, onStockIn, onStockOut }: InventoryTableP
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            className="text-green-600 hover:text-green-700"
+                                            className="text-chart-1 hover:text-chart-1"
                                             onClick={() => onStockIn(item)}
                                         >
                                             <ArrowUp className="mr-1 h-4 w-4" /> Giriş
@@ -123,7 +142,7 @@ export function InventoryTable({ items, onStockIn, onStockOut }: InventoryTableP
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            className="text-red-600 hover:text-red-700"
+                                            className="text-chart-5 hover:text-chart-5"
                                             onClick={() => onStockOut(item)}
                                         >
                                             <ArrowDown className="mr-1 h-4 w-4" /> Çıkış

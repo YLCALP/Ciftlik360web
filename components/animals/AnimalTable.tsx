@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Animal, ANIMAL_STATUS } from '@/lib/types';
+import { Animal } from '@/lib/types';
+import { animalStatusBadge, normalizeAnimalStatus } from '@/lib/animal-status';
+import { cn } from '@/lib/utils';
 import {
     Table,
     TableBody,
@@ -48,26 +50,6 @@ export function AnimalTable({ animals, onDelete, onEdit, onSell }: AnimalTablePr
         const comparison = aValue < bValue ? -1 : 1;
         return sortConfig.direction === 'asc' ? comparison : -comparison;
     });
-
-    const getStatusColor = (status: string) => {
-        const statusLower = status?.toLowerCase();
-        switch (statusLower) {
-            case 'aktif':
-                return 'bg-green-500 hover:bg-green-600';
-            case 'hasta':
-                return 'bg-red-500 hover:bg-red-600';
-            case 'gebe':
-                return 'bg-blue-500 hover:bg-blue-600';
-            case 'satildi':
-            case 'satıldı':
-                return 'bg-red-500 hover:bg-red-600';
-            case 'oldu':
-            case 'öldü':
-                return 'bg-gray-500 hover:bg-gray-600';
-            default:
-                return 'bg-green-500 hover:bg-green-600';
-        }
-    };
 
     const translateSpecies = (species: string) => {
         const translations: Record<string, string> = {
@@ -136,8 +118,8 @@ export function AnimalTable({ animals, onDelete, onEdit, onSell }: AnimalTablePr
                                 {new Date(animal.purchase_date).toLocaleDateString('tr-TR')}
                             </TableCell>
                             <TableCell>
-                                <Badge className={getStatusColor(animal.status || 'Aktif')}>
-                                    {animal.status || 'Aktif'}
+                                <Badge className={cn('border-transparent', animalStatusBadge(animal.status).badgeClass)}>
+                                    {animalStatusBadge(animal.status).label}
                                 </Badge>
                             </TableCell>
                             <TableCell className="text-right">
@@ -151,16 +133,16 @@ export function AnimalTable({ animals, onDelete, onEdit, onSell }: AnimalTablePr
                                         variant="ghost"
                                         size="icon"
                                         onClick={() => onEdit(animal)}
-                                        disabled={animal.status === ANIMAL_STATUS.SATILDI}
+                                        disabled={normalizeAnimalStatus(animal.status) === 'Satildi'}
                                     >
                                         <Edit className="h-4 w-4" />
                                     </Button>
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="text-green-600 hover:text-green-700"
+                                        className="text-chart-1 hover:text-chart-1"
                                         onClick={() => onSell(animal)}
-                                        disabled={animal.status === ANIMAL_STATUS.SATILDI}
+                                        disabled={normalizeAnimalStatus(animal.status) === 'Satildi'}
                                     >
                                         <BadgeTurkishLira className="h-4 w-4" />
                                     </Button>
@@ -169,7 +151,7 @@ export function AnimalTable({ animals, onDelete, onEdit, onSell }: AnimalTablePr
                                         size="icon"
                                         className="text-destructive"
                                         onClick={() => onDelete(animal.id)}
-                                        disabled={animal.status === ANIMAL_STATUS.SATILDI}
+                                        disabled={normalizeAnimalStatus(animal.status) === 'Satildi'}
                                     >
                                         <Trash className="h-4 w-4" />
                                     </Button>

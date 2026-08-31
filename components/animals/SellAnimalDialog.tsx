@@ -144,7 +144,7 @@ export function SellAnimalDialog({ animal, isOpen, onClose, onConfirm }: SellAni
                                                 </Button>
                                             </FormControl>
                                         </PopoverTrigger>
-                                        <PopoverContent className="w-[340px] p-0" align="start">
+                                        <PopoverContent className="w-auto rounded-2xl p-0" align="start">
                                             <Calendar
                                                 mode="single"
                                                 selected={field.value}
