@@ -18,6 +18,8 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 const formSchema = z.object({
     fullName: z.string().min(2, {
@@ -124,7 +126,12 @@ export default function SignUpPage() {
                                 </FormItem>
                             )}
                         />
-                        {error && <p className="text-sm text-red-500">{error}</p>}
+                        {error && (
+                            <Alert variant="destructive">
+                                <AlertCircle />
+                                <AlertDescription>{error}</AlertDescription>
+                            </Alert>
+                        )}
                         <Button type="submit" className="w-full" disabled={loading} id="submit-signup">
                             {loading ? 'Hesap oluşturuluyor...' : 'Kaydol'}
                         </Button>

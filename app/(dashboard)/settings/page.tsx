@@ -1,16 +1,17 @@
 'use client';
 
-import { useState } from 'react';
 import { ProfileForm } from '@/components/settings/ProfileForm';
 import { FarmInfoForm } from '@/components/settings/FarmInfoForm';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { PageHeader } from '@/components/shared/PageHeader';
 
 export default function SettingsPage() {
     return (
-        <div className="space-y-6 animate-fade-in">
+        <div className="space-y-6">
+            <PageHeader title="Ayarlar" description="Hesap ve çiftlik bilgilerinizi yönetin" />
 
-            <Tabs defaultValue="profile" className="space-y-6 animate-slide-up delay-100">
-                <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
+            <Tabs defaultValue="profile" className="max-w-xl space-y-6">
+                <TabsList className="w-fit">
                     <TabsTrigger value="profile">Profil</TabsTrigger>
                     <TabsTrigger value="farm">Çiftlik Bilgileri</TabsTrigger>
                 </TabsList>

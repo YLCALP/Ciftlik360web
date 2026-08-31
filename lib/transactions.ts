@@ -1,5 +1,39 @@
 // Transaction helper functions
 import { createClient } from '@/lib/supabase/client';
+import { Transaction } from '@/lib/types';
+import { formatDate } from '@/lib/format';
+
+export interface MonthlyTotals {
+    name: string;
+    rawDate: Date;
+    Gelir: number;
+    Gider: number;
+    [key: string]: unknown;
+}
+
+/** Groups transactions into per-month income/expense totals, sorted chronologically. */
+export function groupTransactionsByMonth(transactions: Transaction[]): MonthlyTotals[] {
+    const byMonth = transactions.reduce((acc, t) => {
+        const date = new Date(t.date);
+        const monthYear = formatDate(date, 'monthYear');
+
+        const existing = acc.find((item) => item.name === monthYear);
+        if (existing) {
+            if (t.type === 'Gelir') existing.Gelir += t.amount;
+            else existing.Gider += t.amount;
+        } else {
+            acc.push({
+                name: monthYear,
+                rawDate: date,
+                Gelir: t.type === 'Gelir' ? t.amount : 0,
+                Gider: t.type === 'Gider' ? t.amount : 0,
+            });
+        }
+        return acc;
+    }, [] as MonthlyTotals[]);
+
+    return byMonth.sort((a, b) => a.rawDate.getTime() - b.rawDate.getTime());
+}
 
 export async function createAnimalPurchaseTransaction(
     userId: string,

@@ -3,12 +3,15 @@
 import { useState, useEffect } from 'react';
 import { DashboardSkeleton } from '@/components/dashboard/DashboardSkeleton';
 import { createClient } from '@/lib/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Beef, TrendingUp, TrendingDown, AlertTriangle, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Beef, TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react';
 import { DashboardStats, Transaction } from '@/lib/types';
-import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
-import { tr } from 'date-fns/locale';
+import { format, subMonths, startOfMonth } from 'date-fns';
 import { OverviewChart } from '@/components/dashboard/OverviewChart';
+import { HerdStrip } from '@/components/dashboard/HerdStrip';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { Panel } from '@/components/shared/Panel';
+import { StatBand } from '@/components/shared/StatCard';
+import { formatCurrency, formatDate } from '@/lib/format';
 
 export default function DashboardPage() {
     const [stats, setStats] = useState<DashboardStats>({
@@ -18,6 +21,7 @@ export default function DashboardPage() {
         monthlyIncome: 0,
         monthlyExpense: 0,
     });
+    const [animalStatuses, setAnimalStatuses] = useState<{ status: string | null }[]>([]);
     const [recentActivity, setRecentActivity] = useState<Transaction[]>([]);
     const [chartData, setChartData] = useState<{ date: string; gelir: number; gider: number }[]>([]);
     const [loading, setLoading] = useState(true);
@@ -26,13 +30,16 @@ export default function DashboardPage() {
     useEffect(() => {
         async function fetchDashboardData() {
             try {
-                // Fetch Animals Count
-                const { count: animalsCount, error: animalsError } = await supabase
+                // Fetch all animal statuses — drives the herd strip plus the
+                // active/sick counts below.
+                const { data: animals, error: animalsError } = await supabase
                     .from('animals')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('status', 'Aktif');
+                    .select('status');
 
                 if (animalsError) throw animalsError;
+
+                const totalAnimals = (animals ?? []).filter((a) => (a.status ?? 'Aktif') === 'Aktif').length;
+                const sickAnimals = (animals ?? []).filter((a) => a.status === 'Hasta').length;
 
                 // Fetch Low Stock Items (quantity < 10)
                 const { count: lowStockCount, error: lowStockError } = await supabase
@@ -108,9 +115,10 @@ export default function DashboardPage() {
 
                 if (recentError) throw recentError;
 
+                setAnimalStatuses(animals ?? []);
                 setStats({
-                    totalAnimals: animalsCount || 0,
-                    sickAnimals: 0,
+                    totalAnimals,
+                    sickAnimals,
                     lowStockItems: lowStockCount || 0,
                     monthlyIncome: gelir,
                     monthlyExpense: gider,
@@ -127,129 +135,82 @@ export default function DashboardPage() {
         fetchDashboardData();
     }, []);
 
-    const formatCurrency = (amount: number) => {
-        return `${amount.toLocaleString('tr-TR')}₺`;
-    };
-
     if (loading) {
         return <DashboardSkeleton />;
     }
 
     return (
-        <div className="space-y-6 animate-fade-in">
-            <div className="flex items-center justify-end">
+        <div className="space-y-6">
+            <PageHeader title="Genel Bakış" description="Çiftliğinizin güncel durumu" />
 
-            </div>
+            <StatBand
+                items={[
+                    { label: 'Toplam Hayvan', value: stats.totalAnimals, icon: Beef, hint: 'Aktif çiftlik mevcudu' },
+                    {
+                        label: 'Hasta Hayvan',
+                        value: stats.sickAnimals,
+                        icon: AlertTriangle,
+                        tone: stats.sickAnimals > 0 ? 'warning' : 'default',
+                        hint: 'Tedavi altındaki hayvanlar',
+                    },
+                    {
+                        label: 'Kritik Stok',
+                        value: stats.lowStockItems,
+                        icon: AlertTriangle,
+                        tone: stats.lowStockItems > 0 ? 'negative' : 'default',
+                        hint: '10 birim altı ürünler',
+                    },
+                    {
+                        label: 'Aylık Gelir',
+                        value: formatCurrency(stats.monthlyIncome),
+                        icon: TrendingUp,
+                        tone: 'positive',
+                        hint: 'Bu ay',
+                    },
+                    {
+                        label: 'Aylık Gider',
+                        value: formatCurrency(stats.monthlyExpense),
+                        icon: TrendingDown,
+                        tone: 'negative',
+                        hint: 'Bu ay',
+                    },
+                ]}
+            />
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card className="animate-slide-up delay-0 hover:scale-[1.02] transition-all duration-200 border-l-4 border-l-primary">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Toplam Hayvan</CardTitle>
-                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                            <Beef className="h-4 w-4 text-primary" />
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{stats.totalAnimals}</div>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            Aktif çiftlik mevcudu
-                        </p>
-                    </CardContent>
-                </Card>
+            <HerdStrip animals={animalStatuses} />
 
-                <Card className="animate-slide-up delay-100 hover:scale-[1.02] transition-all duration-200 border-l-4 border-l-destructive">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Kritik Stok</CardTitle>
-                        <div className="h-8 w-8 rounded-full bg-destructive/10 flex items-center justify-center">
-                            <AlertTriangle className="h-4 w-4 text-destructive" />
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{stats.lowStockItems}</div>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            10 birim altı ürünler
-                        </p>
-                    </CardContent>
-                </Card>
-
-                <Card className="animate-slide-up delay-200 hover:scale-[1.02] transition-all duration-200 border-l-4 border-l-green-500">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Aylık Gelir</CardTitle>
-                        <div className="h-8 w-8 rounded-full bg-green-500/10 flex items-center justify-center">
-                            <TrendingUp className="h-4 w-4 text-green-500" />
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-green-600">{formatCurrency(stats.monthlyIncome)}</div>
-                        <div className="flex items-center text-xs text-green-600 mt-1">
-                            <ArrowUpRight className="mr-1 h-3 w-3" />
-                            Bu ay
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="animate-slide-up delay-300 hover:scale-[1.02] transition-all duration-200 border-l-4 border-l-red-500">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Aylık Gider</CardTitle>
-                        <div className="h-8 w-8 rounded-full bg-red-500/10 flex items-center justify-center">
-                            <TrendingDown className="h-4 w-4 text-red-500" />
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-red-600">{formatCurrency(stats.monthlyExpense)}</div>
-                        <div className="flex items-center text-xs text-red-600 mt-1">
-                            <ArrowDownRight className="mr-1 h-3 w-3" />
-                            Bu ay
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <div className="col-span-4 animate-slide-up delay-200">
+            <div className="grid gap-4 lg:grid-cols-3">
+                <div className="lg:col-span-2">
                     <OverviewChart data={chartData} />
                 </div>
 
-                <Card className="col-span-3 animate-slide-up delay-300">
-                    <CardHeader>
-                        <CardTitle>Son Aktiviteler</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-8">
-                            {recentActivity.length === 0 ? (
-                                <p className="text-sm text-muted-foreground text-center py-8">Henüz aktivite yok.</p>
-                            ) : (
-                                recentActivity.map((transaction) => (
-                                    <div key={transaction.id} className="flex items-center group">
-                                        <div className={`
-                                            flex h-9 w-9 items-center justify-center rounded-full border transition-colors
-                                            ${transaction.type === 'Gelir'
-                                                ? 'bg-green-500/10 border-green-500/20 group-hover:bg-green-500/20'
-                                                : 'bg-red-500/10 border-red-500/20 group-hover:bg-red-500/20'}
-                                        `}>
-                                            {transaction.type === 'Gelir'
-                                                ? <ArrowUpRight className="h-4 w-4 text-green-500" />
-                                                : <ArrowDownRight className="h-4 w-4 text-red-500" />
-                                            }
-                                        </div>
-                                        <div className="ml-4 space-y-1">
-                                            <p className="text-sm font-medium leading-none group-hover:text-primary transition-colors">
-                                                {transaction.description}
-                                            </p>
-                                            <p className="text-xs text-muted-foreground">
-                                                {format(new Date(transaction.date), 'd MMMM yyyy', { locale: tr })}
-                                            </p>
-                                        </div>
-                                        <div className={`ml-auto font-medium ${transaction.type === 'Gelir' ? 'text-green-600' : 'text-red-600'
-                                            }`}>
-                                            {transaction.type === 'Gelir' ? '+' : '-'}{formatCurrency(transaction.amount)}
-                                        </div>
+                <Panel title="Son Aktiviteler" contentClassName="p-0">
+                    {recentActivity.length === 0 ? (
+                        <p className="px-5 py-8 text-center text-sm text-muted-foreground">Henüz aktivite yok.</p>
+                    ) : (
+                        <div className="divide-y divide-border">
+                            {recentActivity.map((transaction) => (
+                                <div key={transaction.id} className="flex items-center gap-3 px-5 py-3">
+                                    <span
+                                        className={`text-figure text-base ${transaction.type === 'Gelir' ? 'text-chart-1' : 'text-chart-5'}`}
+                                        aria-hidden
+                                    >
+                                        {transaction.type === 'Gelir' ? '+' : '−'}
+                                    </span>
+                                    <div className="min-w-0 flex-1">
+                                        <p className="truncate text-sm font-medium">{transaction.description}</p>
+                                        <p className="text-xs text-muted-foreground">{formatDate(transaction.date, 'long')}</p>
                                     </div>
-                                ))
-                            )}
+                                    <div
+                                        className={`text-figure shrink-0 text-sm ${transaction.type === 'Gelir' ? 'text-chart-1' : 'text-chart-5'}`}
+                                    >
+                                        {transaction.type === 'Gelir' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                                    </div>
+                                </div>
+                            ))}
                         </div>
-                    </CardContent>
-                </Card>
+                    )}
+                </Panel>
             </div>
         </div>
     );

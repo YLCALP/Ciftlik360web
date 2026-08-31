@@ -17,10 +17,17 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-    DialogFooter,
-    DialogDescription,
 } from '@/components/ui/dialog';
-import { Card, CardContent } from '@/components/ui/card';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { TableSkeleton } from '@/components/shared/TableSkeleton';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Beef } from 'lucide-react';
@@ -38,6 +45,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { exportToExcel, exportToPDF } from '@/lib/export';
+import { PageHeader } from '@/components/shared/PageHeader';
 
 export default function AnimalsPage() {
     const [animals, setAnimals] = useState<Animal[]>([]);
@@ -269,116 +277,118 @@ export default function AnimalsPage() {
     };
 
     return (
-        <div className="space-y-6 animate-fade-in">
-            <div className="flex flex-col sm:flex-row items-center gap-4 animate-slide-up delay-100">
-                <div className="relative w-full sm:w-64">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                        placeholder="Hayvan ara..."
-                        className="pl-9"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
+        <div className="space-y-6">
+            <PageHeader
+                title="Hayvanlar"
+                actions={
+                    <>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline">
+                                    <Download className="mr-2 h-4 w-4" /> Dışa Aktar
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuItem onClick={() => {
+                                    const success = exportToExcel(
+                                        filteredAnimals.map((a: Animal) => ({
+                                            'Küpe No': a.tag_number,
+                                            'İsim': a.name || '-',
+                                            'Tür': a.species,
+                                            'Irk': a.breed || '-',
+                                            'Cinsiyet': a.gender,
+                                            'Doğum Tarihi': a.birth_date || '-',
+                                            'Kilo': a.weight || '-',
+                                            'Alış Fiyatı': a.purchase_price,
+                                            'Alış Tarihi': a.purchase_date,
+                                            'Satış Fiyatı': a.sold_price || '-',
+                                            'Satış Tarihi': a.sold_date || '-',
+                                            'Durum': a.status || 'Aktif'
+                                        })),
+                                        'Hayvanlar'
+                                    );
+                                    if (success) toast.success('Başarılı!', 'Excel dosyası indirildi.');
+                                    else toast.error('Hata!', 'Dışa aktarma başarısız.');
+                                }}>
+                                    Excel (.xlsx)
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => {
+                                    const success = exportToPDF(
+                                        filteredAnimals,
+                                        [
+                                            { header: 'Küpe No', dataKey: 'tag_number' },
+                                            { header: 'İsim', dataKey: 'name' },
+                                            { header: 'Tür', dataKey: 'species' },
+                                            { header: 'Irk', dataKey: 'breed' },
+                                            { header: 'Cinsiyet', dataKey: 'gender' },
+                                            { header: 'Durum', dataKey: 'status' },
+                                        ],
+                                        'Hayvanlar',
+                                        'Hayvan Listesi'
+                                    );
+                                    if (success) toast.success('Başarılı!', 'PDF dosyası indirildi.');
+                                    else toast.error('Hata!', 'Dışa aktarma başarısız.');
+                                }}>
+                                    PDF (.pdf)
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                            <DialogTrigger asChild>
+                                <Button>
+                                    <Plus className="mr-2 h-4 w-4" /> Hayvan Ekle
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+                                <DialogHeader>
+                                    <DialogTitle>Yeni Hayvan Ekle</DialogTitle>
+                                </DialogHeader>
+                                <AnimalForm
+                                    onSubmit={handleCreate}
+                                    onCancel={() => setIsAddDialogOpen(false)}
+                                    loading={isSubmitting}
+                                />
+                            </DialogContent>
+                        </Dialog>
+                    </>
+                }
+            >
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <div className="relative w-full sm:w-64">
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            placeholder="Hayvan ara..."
+                            className="pl-9"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                        <SelectTrigger className="w-full sm:w-[180px]">
+                            <SelectValue placeholder="Duruma göre filtrele" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="Hepsi">Tüm Durumlar</SelectItem>
+                            <SelectItem value="Aktif">Aktif</SelectItem>
+                            <SelectItem value="Satildi">Satıldı</SelectItem>
+                            <SelectItem value="Hasta">Hasta</SelectItem>
+                            <SelectItem value="Gebe">Gebe</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <Select value={typeFilter} onValueChange={setTypeFilter}>
+                        <SelectTrigger className="w-full sm:w-[180px]">
+                            <SelectValue placeholder="Türe göre filtrele" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="Hepsi">Tüm Türler</SelectItem>
+                            <SelectItem value="Inek">İnek</SelectItem>
+                            <SelectItem value="Koyun">Koyun</SelectItem>
+                            <SelectItem value="Keci">Keçi</SelectItem>
+                            <SelectItem value="Tavuk">Tavuk</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-full sm:w-[180px]">
-                        <SelectValue placeholder="Duruma göre filtrele" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="Hepsi">Tüm Durumlar</SelectItem>
-                        <SelectItem value="Aktif">Aktif</SelectItem>
-                        <SelectItem value="Satildi">Satıldı</SelectItem>
-                        <SelectItem value="Hasta">Hasta</SelectItem>
-                        <SelectItem value="Gebe">Gebe</SelectItem>
-                    </SelectContent>
-                </Select>
-                <Select value={typeFilter} onValueChange={setTypeFilter}>
-                    <SelectTrigger className="w-full sm:w-[180px]">
-                        <SelectValue placeholder="Türe göre filtrele" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="Hepsi">Tüm Türler</SelectItem>
-                        <SelectItem value="Inek">İnek</SelectItem>
-                        <SelectItem value="Koyun">Koyun</SelectItem>
-                        <SelectItem value="Keci">Keçi</SelectItem>
-                        <SelectItem value="Tavuk">Tavuk</SelectItem>
-                    </SelectContent>
-                </Select>
-                <div className="flex gap-2 w-full sm:w-auto sm:ml-auto">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline">
-                                <Download className="mr-2 h-4 w-4" /> Dışa Aktar
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuItem onClick={() => {
-                                const success = exportToExcel(
-                                    filteredAnimals.map((a: Animal) => ({
-                                        'Küpe No': a.tag_number,
-                                        'İsim': a.name || '-',
-                                        'Tür': a.species,
-                                        'Irk': a.breed || '-',
-                                        'Cinsiyet': a.gender,
-                                        'Doğum Tarihi': a.birth_date || '-',
-                                        'Kilo': a.weight || '-',
-                                        'Alış Fiyatı': a.purchase_price,
-                                        'Alış Tarihi': a.purchase_date,
-                                        'Satış Fiyatı': a.sold_price || '-',
-                                        'Satış Tarihi': a.sold_date || '-',
-                                        'Durum': a.status || 'Aktif'
-                                    })),
-                                    'Hayvanlar'
-                                );
-                                if (success) toast.success('Başarılı!', 'Excel dosyası indirildi.');
-                                else toast.error('Hata!', 'Dışa aktarma başarısız.');
-                            }}>
-                                Excel (.xlsx)
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => {
-                                const success = exportToPDF(
-                                    filteredAnimals,
-                                    [
-                                        { header: 'Küpe No', dataKey: 'tag_number' },
-                                        { header: 'İsim', dataKey: 'name' },
-                                        { header: 'Tür', dataKey: 'species' },
-                                        { header: 'Irk', dataKey: 'breed' },
-                                        { header: 'Cinsiyet', dataKey: 'gender' },
-                                        { header: 'Durum', dataKey: 'status' },
-                                    ],
-                                    'Hayvanlar',
-                                    'Hayvan Listesi'
-                                );
-                                if (success) toast.success('Başarılı!', 'PDF dosyası indirildi.');
-                                else toast.error('Hata!', 'Dışa aktarma başarısız.');
-                            }}>
-                                PDF (.pdf)
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                    <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                        <DialogTrigger asChild>
-                            <Button>
-                                <Plus className="mr-2 h-4 w-4" /> Hayvan Ekle
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-                            <DialogHeader>
-                                <DialogTitle>Yeni Hayvan Ekle</DialogTitle>
-                            </DialogHeader>
-                            <AnimalForm
-                                onSubmit={handleCreate}
-                                onCancel={() => setIsAddDialogOpen(false)}
-                                loading={isSubmitting}
-                            />
-                        </DialogContent>
-                    </Dialog>
-                </div>
-            </div>
-
-
-
-
+            </PageHeader>
 
             {loading ? (
                 <TableSkeleton />
@@ -391,17 +401,13 @@ export default function AnimalsPage() {
                     onAction={() => setIsAddDialogOpen(true)}
                 />
             ) : (
-                <div className="animate-slide-up delay-200">
-                    <Card>
-                        <CardContent className="p-0">
-                            <AnimalTable
-                                animals={filteredAnimals}
-                                onDelete={handleDeleteClick}
-                                onEdit={handleEditClick}
-                                onSell={handleSellClick}
-                            />
-                        </CardContent>
-                    </Card>
+                <div className="overflow-hidden rounded-lg border">
+                    <AnimalTable
+                        animals={filteredAnimals}
+                        onDelete={handleDeleteClick}
+                        onEdit={handleEditClick}
+                        onSell={handleSellClick}
+                    />
                 </div>
             )}
 
@@ -421,24 +427,22 @@ export default function AnimalsPage() {
                 </DialogContent>
             </Dialog>
 
-            <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Emin misiniz?</DialogTitle>
-                        <DialogDescription>
+            <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Emin misiniz?</AlertDialogTitle>
+                        <AlertDialogDescription>
                             Bu işlem geri alınamaz. Hayvan kaydı kalıcı olarak silinecektir.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
-                            İptal
-                        </Button>
-                        <Button variant="destructive" onClick={confirmDelete}>
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>İptal</AlertDialogCancel>
+                        <AlertDialogAction variant="destructive" onClick={confirmDelete}>
                             Sil
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
 
             <SellAnimalDialog
                 animal={animalToSell}

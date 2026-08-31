@@ -17,10 +17,10 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { Card, CardContent } from '@/components/ui/card';
 import { TableSkeleton } from '@/components/shared/TableSkeleton';
 import { EmptyState } from '@/components/ui/empty-state';
-import { PackageOpen } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { PackageOpen, AlertCircle } from 'lucide-react';
 import {
     Select,
     SelectContent,
@@ -35,6 +35,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { exportToExcel, exportToPDF } from '@/lib/export';
+import { PageHeader } from '@/components/shared/PageHeader';
 
 export default function InventoryPage() {
     const [items, setItems] = useState<InventoryItem[]>([]);
@@ -184,89 +185,94 @@ export default function InventoryPage() {
     };
 
     return (
-        <div className="space-y-6 animate-fade-in">
-            <div className="flex flex-col sm:flex-row items-center gap-4 animate-slide-up delay-100">
-                <div className="relative w-full sm:w-64">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                        placeholder="Envanter ara..."
-                        className="pl-9"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                </div>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-full sm:w-[180px]">
-                        <SelectValue placeholder="Duruma göre filtrele" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="Hepsi">Tüm Ürünler</SelectItem>
-                        <SelectItem value="Stokta">Stokta</SelectItem>
-                        <SelectItem value="DusukStok">Düşük Stok (&lt; 10)</SelectItem>
-                        <SelectItem value="StokYok">Stok Yok</SelectItem>
-                    </SelectContent>
-                </Select>
-                <div className="flex gap-2 w-full sm:w-auto sm:ml-auto">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline">
-                                <Download className="mr-2 h-4 w-4" /> Dışa Aktar
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuItem onClick={() => {
-                                const success = exportToExcel(
-                                    filteredItems.map((item: InventoryItem) => ({
-                                        'Ürün Adı': item.feed_name,
-                                        'Tür': item.feed_type,
-                                        'Marka': item.brand || '-',
-                                        'Miktar': item.quantity,
-                                        'Birim': item.unit,
-                                        'Alış Fiyatı': item.purchase_price,
-                                        'Alış Tarihi': item.purchase_date,
-                                        'Son Kullanma': item.expiry_date || '-',
-                                    })),
-                                    'Envanter'
-                                );
-                                if (success) toast.success('Başarılı!', 'Excel dosyası indirildi.');
-                                else toast.error('Hata!', 'Dışa aktarma başarısız.');
-                            }}>
-                                Excel (.xlsx)
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => {
-                                const success = exportToPDF(
-                                    filteredItems,
-                                    [
-                                        { header: 'Ürün Adı', dataKey: 'feed_name' },
-                                        { header: 'Tür', dataKey: 'feed_type' },
-                                        { header: 'Marka', dataKey: 'brand' },
-                                        { header: 'Miktar', dataKey: 'quantity' },
-                                        { header: 'Birim', dataKey: 'unit' },
-                                        { header: 'Alış Fiyatı', dataKey: 'purchase_price' },
-                                    ],
-                                    'Envanter',
-                                    'Envanter Listesi'
-                                );
-                                if (success) toast.success('Başarılı!', 'PDF dosyası indirildi.');
-                                else toast.error('Hata!', 'Dışa aktarma başarısız.');
-                            }}>
-                                PDF (.pdf)
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                    <Button onClick={() => setIsAddDialogOpen(true)}>
-                        <Plus className="mr-2 h-4 w-4" /> Ürün Ekle
-                    </Button>
-                </div>
-            </div>
-
-            {
-                error && (
-                    <div className="bg-destructive/15 text-destructive px-4 py-2 rounded-md">
-                        Error: {error}
+        <div className="space-y-6">
+            <PageHeader
+                title="Envanter"
+                actions={
+                    <>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline">
+                                    <Download className="mr-2 h-4 w-4" /> Dışa Aktar
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuItem onClick={() => {
+                                    const success = exportToExcel(
+                                        filteredItems.map((item: InventoryItem) => ({
+                                            'Ürün Adı': item.feed_name,
+                                            'Tür': item.feed_type,
+                                            'Marka': item.brand || '-',
+                                            'Miktar': item.quantity,
+                                            'Birim': item.unit,
+                                            'Alış Fiyatı': item.purchase_price,
+                                            'Alış Tarihi': item.purchase_date,
+                                            'Son Kullanma': item.expiry_date || '-',
+                                        })),
+                                        'Envanter'
+                                    );
+                                    if (success) toast.success('Başarılı!', 'Excel dosyası indirildi.');
+                                    else toast.error('Hata!', 'Dışa aktarma başarısız.');
+                                }}>
+                                    Excel (.xlsx)
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => {
+                                    const success = exportToPDF(
+                                        filteredItems,
+                                        [
+                                            { header: 'Ürün Adı', dataKey: 'feed_name' },
+                                            { header: 'Tür', dataKey: 'feed_type' },
+                                            { header: 'Marka', dataKey: 'brand' },
+                                            { header: 'Miktar', dataKey: 'quantity' },
+                                            { header: 'Birim', dataKey: 'unit' },
+                                            { header: 'Alış Fiyatı', dataKey: 'purchase_price' },
+                                        ],
+                                        'Envanter',
+                                        'Envanter Listesi'
+                                    );
+                                    if (success) toast.success('Başarılı!', 'PDF dosyası indirildi.');
+                                    else toast.error('Hata!', 'Dışa aktarma başarısız.');
+                                }}>
+                                    PDF (.pdf)
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                        <Button onClick={() => setIsAddDialogOpen(true)}>
+                            <Plus className="mr-2 h-4 w-4" /> Ürün Ekle
+                        </Button>
+                    </>
+                }
+            >
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <div className="relative w-full sm:w-64">
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            placeholder="Envanter ara..."
+                            className="pl-9"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
                     </div>
-                )
-            }
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                        <SelectTrigger className="w-full sm:w-[180px]">
+                            <SelectValue placeholder="Duruma göre filtrele" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="Hepsi">Tüm Ürünler</SelectItem>
+                            <SelectItem value="Stokta">Stokta</SelectItem>
+                            <SelectItem value="DusukStok">Düşük Stok (&lt; 10)</SelectItem>
+                            <SelectItem value="StokYok">Stok Yok</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+            </PageHeader>
+
+            {error && (
+                <Alert variant="destructive">
+                    <AlertCircle />
+                    <AlertDescription>{error}</AlertDescription>
+                </Alert>
+            )}
 
             {
                 loading ? (
@@ -280,16 +286,12 @@ export default function InventoryPage() {
                         onAction={() => setIsAddDialogOpen(true)}
                     />
                 ) : (
-                    <div className="animate-slide-up delay-200">
-                        <Card>
-                            <CardContent className="p-0">
-                                <InventoryTable
-                                    items={filteredItems}
-                                    onStockIn={handleStockIn}
-                                    onStockOut={handleStockOut}
-                                />
-                            </CardContent>
-                        </Card>
+                    <div className="overflow-hidden rounded-lg border">
+                        <InventoryTable
+                            items={filteredItems}
+                            onStockIn={handleStockIn}
+                            onStockOut={handleStockOut}
+                        />
                     </div>
                 )
             }
