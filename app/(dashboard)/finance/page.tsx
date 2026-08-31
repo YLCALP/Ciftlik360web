@@ -211,7 +211,7 @@ export default function FinancePage() {
                                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                 </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
+                            <PopoverContent className="w-auto rounded-2xl p-0" align="start">
                                 <Calendar
                                     mode="single"
                                     selected={dateFilter.start ? new Date(dateFilter.start) : undefined}
@@ -240,7 +240,7 @@ export default function FinancePage() {
                                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                 </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
+                            <PopoverContent className="w-auto rounded-2xl p-0" align="start">
                                 <Calendar
                                     mode="single"
                                     selected={dateFilter.end ? new Date(dateFilter.end) : undefined}
